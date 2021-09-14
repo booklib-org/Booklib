@@ -13,6 +13,8 @@ Additional software required:
 - Application: git
 - Application: unrar (5.21+)
 
+## Screenshots
+Screenshots can be found at https://imgur.com/a/WTzchmS
 
 ## Installation
 
