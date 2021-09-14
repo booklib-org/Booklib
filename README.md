@@ -16,7 +16,7 @@ Additional software required:
 ## Installation
 
 1. Checkout our repo in the location where you want to host the files:
-   git clone "" .
+   git clone "https://github.com/MKaterbarg/Booklib.git" .
 2. Add the appropriate webserver configuration to your webserver. Please point your document root not to the base directory, but to the "public" subdirectory of our system 
 3. Rename the .env.example file to .env and edit the required values. Make sure you update the following values:
     - DB_HOST - This probably needs to be "localhost", unless you use an external MySQL server
