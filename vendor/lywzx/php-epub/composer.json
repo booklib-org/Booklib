@@ -1,0 +1,53 @@
+{
+    "name": "lywzx/php-epub",
+    "description": "php epub parser",
+    "type": "library",
+    "keywords": [
+        "epub",
+        "parser"
+    ],
+    "homepage": "https://www.lyblog.net",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "liuyang",
+            "email": "liuyang@lyblog.net"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "lywzx\\epub\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "dev",
+    "require": {
+        "php":">=7.0.0",
+        "erusev/parsedown": "1.7.1"
+    },
+    "scripts": {
+        "test": [
+            "@phpunit",
+            "@phpcs"
+        ],
+        "phpunit": "phpunit --verbose",
+        "phpcs": "php-cs-fixer fix -v --diff --dry-run",
+        "phpstan": "phpstan analyse --configuration phpstan.neon --level 3 src tests",
+        "phpmd": "phpmd src text /phpmd.xml",
+        "phpdoc": "php phpdoc.php"
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.laravel-china.org"
+        }
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "3.*",
+        "phpunit/phpunit": "6.2"
+    }
+}

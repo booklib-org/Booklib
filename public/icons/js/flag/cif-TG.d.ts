@@ -1,0 +1,1 @@
+export declare const cifTG: any[];
