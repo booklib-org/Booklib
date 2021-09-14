@@ -17,14 +17,15 @@ Additional software required:
 
 1. Checkout our repo in the location where you want to host the files:
    git clone "" .
-2. Add the appropriate webserver configuration to your webserver. Please point your document root not to the base directory, but to the "public" subdirectory of our system 
-3. Rename the .env.example file to .env and edit the required values. Make sure you update the following values:
+2. Install composer packages with `composer install`
+3. Add the appropriate webserver configuration to your webserver. Please point your document root not to the base directory, but to the "public" subdirectory of our system 
+4. Rename the .env.example file to .env and edit the required values. Make sure you update the following values:
     - DB_HOST - This probably needs to be "localhost", unless you use an external MySQL server
     - DB_DATABASE - The name of your database
     - DB_USERNAME - The username that has access to the database
     - DB_PASSWORD - The password of the above user
 
-4. Execute the initialization of the database using the following commands:
+5. Execute the initialization of the database using the following commands:
    
    `php artisan key:generate`
    
