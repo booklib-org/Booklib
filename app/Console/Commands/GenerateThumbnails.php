@@ -101,6 +101,9 @@ class GenerateThumbnails extends Command
 
                 }elseif(str_ends_with(strtolower($file->filename), ".cbz")){
 
+                    if(getenv('APP_DEBUG') == true){
+                        echo "Currently Processing: " . $file->filename . "\n";
+                    }
                     $za = new \ZipArchive();
 
                     $za->open($file->directory->directory . "/" . $file->filename);
