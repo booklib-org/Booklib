@@ -52,7 +52,7 @@ class GenerateThumbnails extends Command
 
                     //RAR
                     echo $file->filename;
-echo "unrar lb \"" . $file->directory->directory . "/" . $file->filename . "\"\n";
+
                     exec("unrar lb \"" .
                         str_replace("`", "\\`",
                             str_replace("$", "\\$", $file->directory->directory)

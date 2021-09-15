@@ -13,7 +13,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-         $this->call(setting_thumbnail::class);
+
+        $this->call(setting_thumbnail::class);
         $this->call(scanning_frequency::class);
 
     }
