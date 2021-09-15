@@ -15,6 +15,6 @@ class DatabaseSeeder extends Seeder
     {
          $this->call(setting_thumbnail::class);
         $this->call(scanning_frequency::class);
-        $this->call(create_admin_user::class);
+
     }
 }
