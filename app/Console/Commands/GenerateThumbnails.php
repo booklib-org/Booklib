@@ -51,7 +51,9 @@ class GenerateThumbnails extends Command
                 if(str_ends_with(strtolower($file->filename), ".cbr")){
 
                     //RAR
-                    echo $file->filename;
+                    if(getenv('APP_DEBUG') == true){
+                        echo "Currently Processing: " . $file->filename . "\n";
+                    }
 
                     exec("unrar lb \"" .
                         str_replace("`", "\\`",
