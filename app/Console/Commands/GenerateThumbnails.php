@@ -121,7 +121,9 @@ class GenerateThumbnails extends Command
                     exec("mkdir \"" . storage_path("app/tmp/thumbnails/") . "\"");
 
                 }elseif(str_ends_with(strtolower($file->filename), ".pdf")){
-
+                    if(getenv('APP_DEBUG') == true){
+                        echo "Currently Processing: " . $file->filename . "\n";
+                    }
                     exec("pdftk \"" . $file->directory->directory . "/" . $file->filename . "\" cat 1 output \"" . storage_path("app/tmp/thumbnails/1.pdf") . "\"");
                     exec("convert -colorspace RGB -interlace none -quality 100 \"" . storage_path("app/tmp/thumbnails/1.pdf") . "\" \"" . storage_path("app/tmp/thumbnails/1.jpg") . "\"");
 
@@ -131,7 +133,9 @@ class GenerateThumbnails extends Command
                     exec("mkdir \"" . storage_path("app/tmp/thumbnails/") . "\"");
 
                 }elseif(str_ends_with(strtolower($file->filename), ".epub")){
-
+                    if(getenv('APP_DEBUG') == true){
+                        echo "Currently Processing: " . $file->filename . "\n";
+                    }
                     try{
                         $epubParser = new EpubParser($file->directory->directory . "/" . $file->filename);
                         $epubParser->parse();
