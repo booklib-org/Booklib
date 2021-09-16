@@ -55,8 +55,7 @@ RUN cd / && \
 COPY docker-conf/thumb /storage/thumb
 RUN mkdir /Booklib/public/img && \
     ln -s /storage/thumb /Booklib/public/img/thumb
-COPY docker-conf/.env /storage/.env
-RUN ln -s /storage/.env /Booklib/.env
+COPY .env.example /storage/.env.example
 
 COPY docker-conf/logs /storage/logs
 RUN rm -rf /Booklib/storage/logs && \

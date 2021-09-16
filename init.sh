@@ -15,6 +15,8 @@ function is_first_time()
     php artisan key:generate
     php artisan migrate
     php artisan db:seed
+
+    ln -s /storage/.env /Booklib/.env
 }
 
 function not_first_time()
