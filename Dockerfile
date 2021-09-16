@@ -55,7 +55,8 @@ RUN cd / && \
 COPY docker-conf/thumb /storage/thumb
 RUN mkdir /Booklib/public/img && \
     ln -s /storage/thumb /Booklib/public/img/thumb
-COPY .env.example /storage/.env.example
+COPY .env.example /storage/.env
+RUN ln -s /storage/.env /Booklib/.env
 
 COPY docker-conf/logs /storage/logs
 RUN rm -rf /Booklib/storage/logs && \
@@ -82,8 +83,5 @@ EXPOSE 8080
 # Let supervisord start nginx & php-fpm
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
 
-# Configure a healthcheck to validate that everything is up&running
+# Configure a healthcheck to validate that operating properly
 HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1:8080/fpm-ping
-
-# Force this script to run on startup, which does first level initialization.
-ENTRYPOINT ["/init.sh"]
