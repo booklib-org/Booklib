@@ -76,6 +76,7 @@ RUN cd Booklib/ && \
     php composer.phar install
 
 # Final Staging
+RUN rm /storage/logs/empty && rm /storage/thumb/empty
 USER nginx
 WORKDIR /Booklib
 EXPOSE 8080
