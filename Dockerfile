@@ -63,11 +63,11 @@ RUN rm -rf /Booklib/storage/logs && \
     ln -s /storage/logs /Booklib/storage/logs
 
 # Make sure files/folders needed by the processes are accessable when they run under the www-data user
-RUN chown -hR nginx:www-data /Booklib/public && \
+RUN chown -hR nginx:www-data /Booklib/ && \
+    chown -hR nginx:www-data /storage/ && \
     chown -hR nginx:www-data /run && \
     chown -hR nginx:www-data /var/lib/nginx && \
-    chown -hR nginx:www-data /var/log/nginx && \
-    chown -hR nginx:www-data /Booklib/storage
+    chown -hR nginx:www-data /var/log/nginx
 
 # Run Composer Stuff
 RUN cd Booklib/ && \
@@ -76,7 +76,6 @@ RUN cd Booklib/ && \
     php composer.phar install
 
 # Final Staging
-RUN rm /storage/logs/empty && rm /storage/thumb/empty
 USER nginx
 WORKDIR /Booklib
 EXPOSE 8080
