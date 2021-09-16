@@ -70,7 +70,7 @@ class GenerateThumbnails extends Command
                     foreach($files as $fil){
                         if(str_ends_with(strtolower($fil), ".png") || str_ends_with(strtolower($fil), ".jpg") || str_ends_with(strtolower($fil), ".jpeg")
                             || str_ends_with(strtolower($fil), ".bmp")  || str_ends_with(strtolower($fil), ".gif")){
-                            $fileToExport = trim($fil);
+                            $fileToExport = $fil;
                             break;
                         }
                     }
@@ -79,6 +79,7 @@ class GenerateThumbnails extends Command
                         $fileToExport = str_replace("`", "\\`",
                             str_replace("$", "\\$", $fileToExport)
                         );
+
                         exec("unrar x -o \"" .
 
                             str_replace("`", "\\`",
@@ -90,13 +91,14 @@ class GenerateThumbnails extends Command
                             str_replace("`", "\\`",
                                 str_replace("$", "\\$", $file->filename)
                             )
-                            . "\" \"" . $fileToExport . "\" " . storage_path("app/tmp/thumbnails"));
+                            . "\" -- \"" . $fileToExport . "\" " . storage_path("app/tmp/thumbnails"));
 
                         $this->SaveThumb($fileToExport, $file);
                     }
 
                     unset($files);
                     unset($fileToExport);
+
                     exec("rm -rf \"" . storage_path("app/tmp/thumbnails/") . "\"");
                     exec("mkdir \"" . storage_path("app/tmp/thumbnails/") . "\"");
 
