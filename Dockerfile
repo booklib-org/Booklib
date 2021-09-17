@@ -7,6 +7,7 @@ USER root
 
 # Install packages and remove default server definition
 RUN apk --no-cache add \
+    python3 \
     curl \
     nginx \
     git \
@@ -37,8 +38,12 @@ RUN apk --no-cache add \
     imagemagick \
     supervisor
 
-# Create symlink so programs depending on `php` still function
-RUN ln -s /usr/bin/php8 /usr/bin/php
+# Create symlinks for programs that expect specific things
+RUN cd /usr/local/bin && \
+    ln -s /usr/bin/php8 /usr/bin/php && \
+	ln -s pydoc3 pydoc && \
+	ln -s python3 python && \
+	ln -s python3-config python-config
 
 # Configure App Configs
 COPY docker-conf/nginx.conf /etc/nginx/nginx.conf
@@ -79,6 +84,7 @@ RUN cd Booklib/ && \
 USER nginx
 WORKDIR /Booklib
 EXPOSE 8080
+ENTRYPOINT [ "/Booklib/docker-conf/init.py" ]
 
 # Let supervisord start nginx & php-fpm
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
