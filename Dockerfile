@@ -53,22 +53,24 @@ RUN echo "* * * * * root php /Booklib/artisan schedule:run" >> /etc/crontab
 RUN cd / && \
     git clone "https://github.com/LDShadowLord/Booklib.git" && \
     ln -s /Booklib/public /var/www/html
-COPY docker-conf/empty /storage/thumb
-RUN mkdir /Booklib/public/img && \
-    ln -s /storage/thumb /Booklib/public/img/thumb
-COPY .env.example /storage/.env
-RUN ln -s /storage/.env /Booklib/.env
 
+COPY docker-conf/empty /storage/thumb
 COPY docker-conf/empty /storage/logs
-RUN rm -rf /Booklib/storage/logs && \
+
+RUN mkdir /Booklib/public/img && \
+    ln -s /storage/thumb /Booklib/public/img/thumb && \
+    rm -rf /Booklib/storage/logs && \
     ln -s /storage/logs /Booklib/storage/logs
+
+COPY docker-conf/init.py /init.py
 
 # Make sure files/folders needed by the processes are accessable when they run under the www-data user
 RUN chown -hR nginx:www-data /Booklib/ && \
     chown -hR nginx:www-data /storage/ && \
     chown -hR nginx:www-data /run && \
     chown -hR nginx:www-data /var/lib/nginx && \
-    chown -hR nginx:www-data /var/log/nginx
+    chown -hR nginx:www-data /var/log/nginx && \
+    chown -hR nginx:www-data /init.py
 
 # Run Composer Stuff
 RUN cd Booklib/ && \
@@ -80,8 +82,7 @@ USER nginx
 WORKDIR /Booklib
 EXPOSE 8080
 
-CMD [ "/Booklib/docker-conf/init.py" ]
-ENTRYPOINT [ "python3" ]
+CMD [ "python3" "/init.py" ]
 
 # Configure a healthcheck to validate that operating properly
 HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1:8080/fpm-ping
