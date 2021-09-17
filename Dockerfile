@@ -1,6 +1,6 @@
 FROM alpine:3.14
-LABEL Maintainer="Harvey Barnes <3749770+LDShadowLord@users.noreply.github.com>"
-LABEL Description="Full Stack Container with Booklib, Nginx, PHP8 on Alpine 3.14 - Needs MySQL to function."
+LABEL Maintainer="Martijn Katerbarg <https://github.com/MKaterbarg/Booklib>"
+LABEL Description="Full Stack Container with Booklib, Nginx, PHP8 on Alpine 3.14 - Needs MySQL to function, please read README."
 VOLUME [ "/storage", "/library" ]
 
 USER root
@@ -71,7 +71,6 @@ RUN chown -hR nginx:www-data /Booklib/ && \
 
 # Run Composer Stuff
 RUN cd Booklib/ && \
-    php composer.phar self-update && \
     php composer.phar update && \
     php composer.phar install
 
