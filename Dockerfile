@@ -1,6 +1,6 @@
 FROM alpine:3.14
-LABEL Maintainer="Harvey Barnes <3749770+LDShadowLord@users.noreply.github.com>"
-LABEL Description="Full Stack Container with Booklib, Nginx, PHP8 on Alpine 3.14 - Needs MySQL to function."
+LABEL Maintainer="Martijn Katerbarg <https://github.com/MKaterbarg/Booklib>"
+LABEL Description="Full Stack Container with Booklib, Nginx, PHP8 on Alpine 3.14 - Needs MySQL to function, please read README."
 VOLUME [ "/storage", "/library" ]
 
 USER root
@@ -57,13 +57,13 @@ RUN echo "* * * * * root php /Booklib/artisan schedule:run" >> /etc/crontab
 RUN cd / && \
     git clone "https://github.com/MKaterbarg/Booklib.git" && \
     ln -s /Booklib/public /var/www/html
-COPY docker-conf/thumb /storage/thumb
+COPY docker-conf/empty /storage/thumb
 RUN mkdir /Booklib/public/img && \
     ln -s /storage/thumb /Booklib/public/img/thumb
 COPY .env.example /storage/.env
 RUN ln -s /storage/.env /Booklib/.env
 
-COPY docker-conf/logs /storage/logs
+COPY docker-conf/empty /storage/logs
 RUN rm -rf /Booklib/storage/logs && \
     ln -s /storage/logs /Booklib/storage/logs
 
@@ -76,7 +76,6 @@ RUN chown -hR nginx:www-data /Booklib/ && \
 
 # Run Composer Stuff
 RUN cd Booklib/ && \
-    php composer.phar self-update && \
     php composer.phar update && \
     php composer.phar install
 
