@@ -39,11 +39,7 @@ RUN apk --no-cache add \
     supervisor
 
 # Create symlinks for programs that expect specific things
-RUN cd /usr/local/bin && \
-    ln -s /usr/bin/php8 /usr/bin/php && \
-	ln -s pydoc3 pydoc && \
-	ln -s python3 python && \
-	ln -s python3-config python-config
+RUN ln -s /usr/bin/php8 /usr/bin/php
 
 # Configure App Configs
 COPY docker-conf/nginx.conf /etc/nginx/nginx.conf
@@ -55,7 +51,7 @@ RUN echo "* * * * * root php /Booklib/artisan schedule:run" >> /etc/crontab
 
 # Setup application
 RUN cd / && \
-    git clone "https://github.com/MKaterbarg/Booklib.git" && \
+    git clone "https://github.com/LDShadowLord/Booklib.git" && \
     ln -s /Booklib/public /var/www/html
 COPY docker-conf/empty /storage/thumb
 RUN mkdir /Booklib/public/img && \
@@ -83,10 +79,9 @@ RUN cd Booklib/ && \
 USER nginx
 WORKDIR /Booklib
 EXPOSE 8080
-ENTRYPOINT [ "/Booklib/docker-conf/init.py" ]
 
-# Let supervisord start nginx & php-fpm
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD [ "/Booklib/docker-conf/init.py" ]
+ENTRYPOINT [ "python3" ]
 
 # Configure a healthcheck to validate that operating properly
 HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1:8080/fpm-ping
