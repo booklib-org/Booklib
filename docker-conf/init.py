@@ -119,7 +119,7 @@ try:
             logging.warning("AUTO_UPDATE set to false, skipping update check.")
 except:
     logging.info("Checking for updates....")
-    result = subprocess.run("cd /Booklib && git pull https://github.com/LDShadowLord/Booklib.git", shell=True, capture_output=True)
+    result = subprocess.run("cd /Booklib && git pull https://github.com/MKaterbarg/Booklib.git", shell=True, capture_output=True)
     if result.returncode != 0:
         logging.error("Encountered error ["+str(result.returncode)+"]during Update")
         logging.warning(result.stderr)
