@@ -55,7 +55,7 @@ except:
     print("Writing new .env file and forming SymLink")
     with open('/storage/.env', 'w') as file:
         for line in ENV_FILE_LIST:
-            file.write(line+"\n\n")
+            file.write(line+"\n")
     os.system("ln -s /storage/.env /Booklib/.env")
 
 # If we've never seen the user before, run initial DB key generation
@@ -99,6 +99,19 @@ if result.returncode != 0:
     print("----")
 else:
     print("Seeding Successful")
+
+# Run a Git Pull to make sure it's up to date
+print("Checking for updates....")
+result = subprocess.run("cd /Booklib && git pull https://github.com/LDShadowLord/Booklib.git", shell=True, capture_output=True)
+if result.returncode != 0:
+    print("Encountered error during update")
+    print("Exit code for update was "+str(result.returncode))
+    print(result.stderr)
+    print("----")
+    print(result.stdout)
+    print("----")
+else:
+    print("Update Successful")
 
 # Finally, launch supervisord and start the server.
 print("Launching Supervisord...")
