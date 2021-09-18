@@ -107,17 +107,27 @@ if result.returncode != 0:
 else:
     logging.info("Seeding Successful")
 
-# Run a Git Pull to make sure it's up to date
-logging.info("Checking for updates....")
-result = subprocess.run("cd /Booklib && git pull https://github.com/LDShadowLord/Booklib.git", shell=True, capture_output=True)
-if result.returncode != 0:
-    logging.error("Encountered error ["+str(result.returncode)+"]during Update")
-    logging.warninging(result.stderr)
-    logging.warning("----")
-    logging.warning(result.stdout)
-    logging.warning("----")
-else:
-    logging.warning("Update Successful or no Update Required")
+# Run a Git Pull to make sure it's up to date unless environmental variable "AUTO_UPDATE" is set to false.
+try:
+    e_v = os.getenv("AUTO_UPDATE")
+    if e_v == None:
+        raise OSError("AUTO_UPDATE Variable not set, defaulting to true")
+    else:
+        if e_v == "TRUE":
+            raise OSError("AUTO_UPDATE Variable set to TRUE")
+        else:
+            logging.warning("AUTO_UPDATE set to false, skipping update check.")
+except:
+    logging.info("Checking for updates....")
+    result = subprocess.run("cd /Booklib && git pull https://github.com/LDShadowLord/Booklib.git", shell=True, capture_output=True)
+    if result.returncode != 0:
+        logging.error("Encountered error ["+str(result.returncode)+"]during Update")
+        logging.warning(result.stderr)
+        logging.warning("----")
+        logging.warning(result.stdout)
+        logging.warning("----")
+    else:
+        logging.warning("Update Successful or no Update Required")
 
 # Finally, launch supervisord and start the server.
 logging.info("Launching Supervisord...")
