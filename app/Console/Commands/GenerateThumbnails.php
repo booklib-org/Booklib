@@ -114,14 +114,17 @@ class GenerateThumbnails extends Command
 
                     $firstPageData = $this->getZipFirstPageData($za, 0);
 
-                    file_put_contents(storage_path("app/tmp/thumbnails/thumb." . pathinfo($firstPageData->pageName, PATHINFO_EXTENSION)), $firstPageData->pageContent);
+                    if(!is_null($firstPageData)){
+                        file_put_contents(storage_path("app/tmp/thumbnails/thumb." . pathinfo($firstPageData->pageName, PATHINFO_EXTENSION)), $firstPageData->pageContent);
 
-                    $this->SaveThumb("thumb." . pathinfo($firstPageData->pageName, PATHINFO_EXTENSION), $file);
+                        $this->SaveThumb("thumb." . pathinfo($firstPageData->pageName, PATHINFO_EXTENSION), $file);
 
-                    $za->close();
+                        $za->close();
 
-                    exec("rm -rf \"" . storage_path("app/tmp/thumbnails/") . "\"");
-                    exec("mkdir \"" . storage_path("app/tmp/thumbnails/") . "\"");
+                        exec("rm -rf \"" . storage_path("app/tmp/thumbnails/") . "\"");
+                        exec("mkdir \"" . storage_path("app/tmp/thumbnails/") . "\"");
+
+                    }
 
                 }elseif(str_ends_with(strtolower($file->filename), ".pdf")){
                     if(getenv('APP_DEBUG') == true){
@@ -258,14 +261,21 @@ class GenerateThumbnails extends Command
 
         $details = new \stdClass();
 
-        $details->pageName = $za->statIndex($index)["name"];
-        $details->pageContent = $za->getFromIndex($index, 0);
+        try{
+            $details->pageName = $za->statIndex($index)["name"];
+            $details->pageContent = $za->getFromIndex($index, 0);
 
-        if(str_ends_with($details->pageName, "/")){
-            $index = $index + 1;
-            return $this->getZipFirstPageData($za, $index);
-        }else{
-            return $details;
+            if(str_ends_with($details->pageName, "/")){
+                $index = $index + 1;
+                return $this->getZipFirstPageData($za, $index);
+            }else{
+                return $details;
+            }
+
+        }catch(\ValueError $valueError){
+            unset($valueError);
+            //TODO: Log this to some kind of error log for user review. Ticket ID 8
+            return null;
         }
 
 
