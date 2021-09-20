@@ -54,11 +54,7 @@ class GenerateThumbnails extends Command
                     if(getenv('APP_DEBUG') == true){
                         echo "Currently Processing: " . $file->filename . "\n";
                     }
-echo "unrar lb \"" .
-    str_replace("\"", "\\\"",$file->directory->directory)
-    . "/" .
 
-    str_replace("\"", "\\\"",$file->filename) . "\"";
                     exec("unrar lb \"" .
                         str_replace("\"", "\\\"",$file->directory->directory)
                      . "/" .
@@ -66,7 +62,7 @@ echo "unrar lb \"" .
                         str_replace("\"", "\\\"",$file->filename) . "\"", $files);
                     sort($files);
 
-                    print_r($files);
+
                     foreach($files as $fil){
                         if(str_ends_with(strtolower($fil), ".png") || str_ends_with(strtolower($fil), ".jpg") || str_ends_with(strtolower($fil), ".jpeg")
                             || str_ends_with(strtolower($fil), ".bmp")  || str_ends_with(strtolower($fil), ".gif")){
@@ -78,7 +74,6 @@ echo "unrar lb \"" .
                     if(isset($fileToExport)){
 
 
-
                         exec("unrar x -o \"" .
 
                             str_replace("\"", "\\\"",$file->directory->directory)
@@ -88,7 +83,7 @@ echo "unrar lb \"" .
                             . "/" .
                             str_replace("\"", "\\\"",$file->filename)
 
-                            . "\" -- " . str_replace("`", "\`",str_replace("\"", "\\\"",$fileToExport)) . " " . storage_path("app/tmp/thumbnails"));
+                            . "\" -- \"" . str_replace("`", "\`",str_replace("\"", "\\\"",$fileToExport)) . "\" " . storage_path("app/tmp/thumbnails"));
 
                         $this->SaveThumb($fileToExport, $file);
                     }
@@ -216,7 +211,9 @@ echo "unrar lb \"" .
             }elseif(str_ends_with(strtolower($firstPage), ".gif")) {
                 $img = imagecreatefromgif(storage_path("app/tmp/thumbnails/" . $firstPage));
             }
+
             if($img){
+
                 $thumbnail = imagescale($img, 150);
 
                 if($thumbnail) {
@@ -248,6 +245,7 @@ echo "unrar lb \"" .
             }
 
         }catch(\ErrorException $e){
+            //TODO: Log this to some kind of error log for user review. Ticket ID 8
             unset($e);
 
         }
