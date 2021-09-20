@@ -51,7 +51,7 @@ RUN echo "* * * * * root php /Booklib/artisan schedule:run" >> /etc/crontab
 
 # Setup application
 RUN cd / && \
-    git clone "https://github.com/LDShadowLord/Booklib.git" && \
+    git clone "https://github.com/MKaterbarg/Booklib.git" && \
     ln -s /Booklib/public /var/www/html
 
 COPY docker-conf/empty /storage/thumb
