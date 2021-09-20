@@ -54,19 +54,19 @@ class GenerateThumbnails extends Command
                     if(getenv('APP_DEBUG') == true){
                         echo "Currently Processing: " . $file->filename . "\n";
                     }
+echo "unrar lb \"" .
+    str_replace("\"", "\\\"",$file->directory->directory)
+    . "/" .
 
+    str_replace("\"", "\\\"",$file->filename) . "\"";
                     exec("unrar lb \"" .
-                        str_replace("`", "\\`",
-                            str_replace("$", "\\$", $file->directory->directory)
-                        )
-
+                        str_replace("\"", "\\\"",$file->directory->directory)
                      . "/" .
 
-                        str_replace("`", "\\`",
-                            str_replace("$", "\\$", $file->filename)
-                        ) . "\"", $files);
+                        str_replace("\"", "\\\"",$file->filename) . "\"", $files);
                     sort($files);
 
+                    print_r($files);
                     foreach($files as $fil){
                         if(str_ends_with(strtolower($fil), ".png") || str_ends_with(strtolower($fil), ".jpg") || str_ends_with(strtolower($fil), ".jpeg")
                             || str_ends_with(strtolower($fil), ".bmp")  || str_ends_with(strtolower($fil), ".gif")){
@@ -76,22 +76,19 @@ class GenerateThumbnails extends Command
                     }
 
                     if(isset($fileToExport)){
-                        $fileToExport = str_replace("`", "\\`",
-                            str_replace("$", "\\$", $fileToExport)
-                        );
+
+
 
                         exec("unrar x -o \"" .
 
-                            str_replace("`", "\\`",
-                                str_replace("$", "\\$", $file->directory->directory)
-                            )
+                            str_replace("\"", "\\\"",$file->directory->directory)
+
 
 
                             . "/" .
-                            str_replace("`", "\\`",
-                                str_replace("$", "\\$", $file->filename)
-                            )
-                            . "\" -- \"" . $fileToExport . "\" " . storage_path("app/tmp/thumbnails"));
+                            str_replace("\"", "\\\"",$file->filename)
+
+                            . "\" -- " . str_replace("`", "\`",str_replace("\"", "\\\"",$fileToExport)) . " " . storage_path("app/tmp/thumbnails"));
 
                         $this->SaveThumb($fileToExport, $file);
                     }
