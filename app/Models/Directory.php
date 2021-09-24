@@ -16,6 +16,13 @@ class Directory extends Model
 
     }
 
+    public function directories(){
+
+        return $this->hasMany(Directory::class, "parent_directory_id", "id");
+
+    }
+
+
     public function thumbnail(){
 
         return $this->hasOne(Thumbnail::class, "dir_id", "id");
