@@ -43,6 +43,7 @@ class SetMetaData extends Command
     public function handle()
     {
         foreach(File::where("has_metadata", "=", false)->where("filename", "LIKE", "%.epub")->get() as $file){
+            echo "Setting metadata for: $file->filename\n";
             try{
             $epubParser = new EpubParser($file->directory->directory . "/" . $file->filename);
 
@@ -98,7 +99,7 @@ class SetMetaData extends Command
         ];
 
         foreach(File::where("has_metadata", "=", false)->where("filename", "LIKE", "%.mobi")->get() as $file){
-
+            echo "Setting metadata for: $file->filename\n";
             $mobi = new \Choccybiccy\Mobi\Reader($file->directory->directory . "/" . $file->filename);
 
             foreach($mobi->getExthHeader() as $exthRecord){
