@@ -44,8 +44,9 @@ class GenerateThumbnails extends Command
     public function handle()
     {
 
-        foreach(File::where("has_thumbnail", "=", false)->get() as $file){
-
+        foreach(File::where("has_thumbnail", "=", false)->where("thumbnail_generation_tried", "=", false)->get() as $file){
+            $file->thumbnail_generation_tried = true;
+            $file->save();
             if(file_exists($file->directory->directory . "/" . $file->filename)){
 
                 if(str_ends_with(strtolower($file->filename), ".cbr")){
