@@ -46,6 +46,16 @@
                                 </select>
                             </div>
                         </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label" for="name">Show Counter in table view</label>
+                                <div class="col-md-9">
+                                    <select class="form-control" id="show_counters" name="show_counters">
+                                        <option value="0" @if(isset($settings["show_counters"]) && $settings["show_counters"]->value == false) selected @endif>No</option>
+                                        <option value="1" @if(isset($settings["show_counters"]) && $settings["show_counters"]->value == true) selected @endif >Yes (Slower page loads)</option>
+                                    </select>
+                                </div>
+                            </div>
+
 
 
                     </div>

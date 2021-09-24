@@ -21,6 +21,8 @@ class ShowLibraryController extends Controller
 
         $view = UserSetting::where("user_id", "=", Auth::user()->id)->where("setting", "=", "default_view")->first()->value ?? "Table View";
 
+        $showCounters =  UserSetting::where("user_id", "=", Auth::user()->id)->where("setting", "=", "show_counters")->first()->value ?? false;
+
         if($view == "Table View"){
             $useView = "library.comics.show_table";
         }else{
@@ -32,7 +34,8 @@ class ShowLibraryController extends Controller
             "library" => $library,
             "directories" => Directory::where("parent_directory_id", "=", 0)->whereIn("library_folder_id", $library->folderIDs())->where("directory_name", "!=", ".")->where("directory", "LIKE", "%" . $request->input("searchDir") . "%")->orderBy("directory_name")->paginate($itemsPerPage)->appends(request()->query()),
             "files" => File::where("id", "=", 0)->get(),
-            "thumbnailSize" => $thumbnailSize
+            "thumbnailSize" => $thumbnailSize,
+            "showCounters" => $showCounters
         ]);
 
     }
@@ -42,6 +45,7 @@ class ShowLibraryController extends Controller
         $view = UserSetting::where("user_id", "=", Auth::user()->id)->where("setting", "=", "default_view")->first()->value ?? "Table View";
         $itemsPerPage = UserSetting::where("user_id", "=", Auth::user()->id)->where("setting", "=", "items_per_page")->first()->value ?? 20;
         $thumbnailSize = UserSetting::where("user_id", "=", Auth::user()->id)->where("setting", "=", "thumbnail_size")->first()->value ?? 100;
+        $showCounters =  UserSetting::where("user_id", "=", Auth::user()->id)->where("setting", "=", "show_counters")->first()->value ?? false;
 
         $directory = Directory::where("id", "=", $dir)->first();
 
@@ -59,7 +63,8 @@ class ShowLibraryController extends Controller
             "directories" => Directory::where("parent_directory_id", "=", $dir)->where("directory_name", "!=", ".")->whereIn("library_folder_id", $library->folderIDs())->where("directory", "LIKE", "%" . $request->input("searchDir") . "%")->orderBy("directory_name")->paginate($itemsPerPage)->appends(request()->query()),
 
             "files" => File::where("directory_id", "=", $dir)->where("filename", "LIKE", "%" . $request->input("searchFile") . "%")->orderBy("filename")->paginate($itemsPerPage, ['*'], "fpage")->appends(request()->query()),
-            "thumbnailSize" => $thumbnailSize
+            "thumbnailSize" => $thumbnailSize,
+            "showCounters" => $showCounters
         ]);
 
     }

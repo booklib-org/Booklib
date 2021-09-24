@@ -21,7 +21,8 @@ class UserSettingsController extends Controller
         $settings = [
             "items_per_page",
             "thumbnail_size",
-            "default_view"
+            "default_view",
+            "show_counters"
         ];
 
 

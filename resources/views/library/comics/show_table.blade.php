@@ -36,16 +36,20 @@
                         <thead>
                         <tr>
                             <th>Name</th>
-                            <th># Files</th>
-                            <th># Subdirectories</th>
+                            @if($showCounters)
+                                <th># Files</th>
+                                <th># Subdirectories</th>
+                            @endif
                         </tr>
                         </thead>
                         <tbody>
                         @foreach($directories as $directory)
                             <tr>
                                 <td><a href="/library/{{$library->id}}/{{$directory->id}}">{{$directory->directory_name}}</a></td>
-                                <td>{{count($directory->files)}}</td>
-                                <td>{{count($directory->directories)}}</td>
+                                @if($showCounters)
+                                    <td>{{count($directory->files)}}</td>
+                                    <td>{{count($directory->directories)}}</td>
+                                @endif
                         @endforeach
                         </tbody>
                     </table>
