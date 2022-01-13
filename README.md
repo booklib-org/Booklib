@@ -65,7 +65,9 @@ Additional software required:
     - DB_PASSWORD - The password of the above user
 
 5. Execute the initialization of the database using the following commands:
-   
+
+   `mv .env.example .env`
+
    `php artisan key:generate`
    
    `php artisan migrate`
