@@ -53,7 +53,7 @@ Additional software required:
 
 1. Checkout our repo in the location where you want to host the files:
 
-   git clone "https://github.com/MKaterbarg/Booklib.git" .
+   git clone "https://github.com/booklib-org/Booklib.git" .
    
 2. Install composer packages with `php composer.phar install`
 3. Add the appropriate webserver configuration to your webserver. Please point your document root not to the base directory, but to the "public" subdirectory of our system 
