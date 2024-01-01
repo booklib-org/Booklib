@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#Start with latest update
+cd /Booklib; git pull
+
 if mountpoint -q /storage; then
 
    if [ ! -d "/storage/thumb" ]; then

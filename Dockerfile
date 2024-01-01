@@ -1,6 +1,6 @@
 FROM alpine:3.19
 LABEL Maintainer="Martijn Katerbarg <https://github.com/booklib-org/booklib>"
-LABEL Description="Full Stack Container with Booklib, Nginx, PHP8 on Alpine 3.14 - Needs MySQL to function, please read README."
+LABEL Description="Full Stack Container with Booklib, Nginx, PHP8.3 on Alpine 3.19 - Needs MySQL to function, please read README."
 VOLUME [ "/storage", "/library" ]
 
 USER root
@@ -59,8 +59,6 @@ RUN echo "* * * * * root php /Booklib/artisan schedule:run" >> /etc/crontab
 # Setup application
 RUN cd / && git clone "https://github.com/booklib-org/booklib.git" /Booklib &&  ln -s /Booklib/public /var/www/html
 
-COPY /Booklib/docker-conf/entrypoint.sh /entrypoint.sh
-
 # Make sure files/folders needed by the processes are accessable when they run under the www-data user
 RUN chown -hR nginx:www-data /Booklib/ && \
     chown -hR nginx:www-data /run && \
@@ -79,7 +77,7 @@ USER nginx
 WORKDIR /Booklib
 EXPOSE 8080
 
-CMD [ "/entrypoint.sh" ]
+CMD [ "/Booklib/docker-conf/entrypoint.sh" ]
 
 # Configure a healthcheck to validate that operating properly
 HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1:8080/fpm-ping
