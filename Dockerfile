@@ -1,4 +1,4 @@
-FROM alpine:3.14
+FROM alpine:3.19
 LABEL Maintainer="Martijn Katerbarg <https://github.com/MKaterbarg/Booklib>"
 LABEL Description="Full Stack Container with Booklib, Nginx, PHP8 on Alpine 3.14 - Needs MySQL to function, please read README."
 VOLUME [ "/storage", "/library" ]
