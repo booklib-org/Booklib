@@ -21,7 +21,7 @@ docker run -d \
   -v /path/to/data:/storage \
   -v /path/to/library:/library \
   --restart unless-stopped \
-  ghcr.io/MKaterbarg/Booklib
+  ghcr.io/booklib-org/booklib
 ```
 The DB_ Variables listed above are required. Failing to add those will result in the container not starting.
     
