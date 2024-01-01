@@ -89,7 +89,7 @@ USER nginx
 WORKDIR /Booklib
 EXPOSE 8080
 
-ENTRYPOINT [ "/entrypoint.py" ]
+ENTRYPOINT [ "/entrypoint.sh" ]
 
 # Configure a healthcheck to validate that operating properly
 HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1:8080/fpm-ping
