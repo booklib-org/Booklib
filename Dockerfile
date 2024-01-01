@@ -61,6 +61,7 @@ RUN cd / && \
     git clone "https://github.com/booklib-org/booklib.git" /Booklib && \
     ln -s /Booklib/public /var/www/html
 
+RUN mkdir /storage
 RUN mkdir /storage/thumb
 RUN mkdir /storage/logs
 
