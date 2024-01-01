@@ -77,7 +77,8 @@ RUN chown -hR nginx:www-data /Booklib/ && \
     chown -hR nginx:www-data /run && \
     chown -hR nginx:www-data /var/lib/nginx && \
     chown -hR nginx:www-data /var/log/nginx && \
-    chown -hR nginx:www-data /entrypoint.sh
+    chown -hR nginx:www-data /entrypoint.sh && \
+    chmod +x /entrypoint.sh
 
 # Run Composer Stuff
 RUN cd /Booklib/ && \
