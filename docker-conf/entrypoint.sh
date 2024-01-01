@@ -23,6 +23,8 @@ if [ ! -f "/storage/.env" ]; then
   php artisan key:generate
 fi
 
+cd /Booklib/ ; php composer.phar update ; php composer.phar install
+
 copy /storage/.env /Booklib/.env
 
 # Run PHP preparation commands

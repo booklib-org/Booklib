@@ -65,12 +65,8 @@ RUN chown -hR nginx:www-data /Booklib/ && \
     chown -hR nginx:www-data /var/lib/nginx && \
     chown -hR nginx:www-data /var/log/nginx && \
     chown -hR nginx:www-data /entrypoint.sh && \
-    chmod +x /entrypoint.sh
+    chmod +x /Booklib/docker-conf/entrypoint.sh
 
-# Run Composer Stuff
-RUN cd /Booklib/ && \
-    php composer.phar update && \
-    php composer.phar install
 
 # Final Staging
 USER nginx
