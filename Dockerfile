@@ -61,15 +61,14 @@ RUN cd / && \
     git clone "https://github.com/booklib-org/booklib.git" /Booklib && \
     ln -s /Booklib/public /var/www/html
 
-COPY docker-conf/empty /storage/thumb
-COPY docker-conf/empty /storage/logs
+RUN mkdir /storage/thumb
+RUN mkdir /storage/logs
 
 RUN mkdir /Booklib/public/img && \
     ln -s /storage/thumb /Booklib/public/img/thumb && \
-    rm -rf /Booklib/storage/logs && \
     ln -s /storage/logs /Booklib/storage/logs
 
-COPY docker-conf/init.py /init.py
+COPY docker-conf/entrypoint.sh /entrypoint.sh
 
 # Make sure files/folders needed by the processes are accessable when they run under the www-data user
 RUN chown -hR nginx:www-data /Booklib/ && \
@@ -77,7 +76,7 @@ RUN chown -hR nginx:www-data /Booklib/ && \
     chown -hR nginx:www-data /run && \
     chown -hR nginx:www-data /var/lib/nginx && \
     chown -hR nginx:www-data /var/log/nginx && \
-    chown -hR nginx:www-data /init.py
+    chown -hR nginx:www-data /entrypoint.sh
 
 # Run Composer Stuff
 RUN cd /Booklib/ && \
@@ -89,8 +88,7 @@ USER nginx
 WORKDIR /Booklib
 EXPOSE 8080
 
-CMD [ "/init.py" ]
-ENTRYPOINT [ "python3" ]
+ENTRYPOINT [ "/entrypoint.py" ]
 
 # Configure a healthcheck to validate that operating properly
 HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1:8080/fpm-ping
