@@ -57,9 +57,7 @@ COPY docker-conf/policy.xml /etc/ImageMagick-7/policy.xml
 RUN echo "* * * * * root php /Booklib/artisan schedule:run" >> /etc/crontab
 
 # Setup application
-RUN cd / && \
-    git clone "https://github.com/booklib-org/booklib.git" /Booklib && \
-    ln -s /Booklib/public /var/www/html
+RUN cd / && git clone "https://github.com/booklib-org/booklib.git" /Booklib &&  ln -s /Booklib/public /var/www/html
 
 COPY /Booklib/docker-conf/entrypoint.sh /entrypoint.sh
 
