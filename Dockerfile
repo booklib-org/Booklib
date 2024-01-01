@@ -61,9 +61,7 @@ RUN cd / && \
     git clone "https://github.com/booklib-org/booklib.git" /Booklib && \
     ln -s /Booklib/public /var/www/html
 
-
-
-COPY docker-conf/entrypoint.sh /entrypoint.sh
+COPY /Booklib/docker-conf/entrypoint.sh /entrypoint.sh
 
 # Make sure files/folders needed by the processes are accessable when they run under the www-data user
 RUN chown -hR nginx:www-data /Booklib/ && \
