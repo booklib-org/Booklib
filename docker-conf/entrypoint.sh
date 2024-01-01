@@ -1,5 +1,19 @@
 #!/bin/bash
 
+if mountpoint -q /storage; then
+
+   if [ ! -d "/storage/thumb" ]; then
+       mkdir -p /storage/thumb
+   fi
+   if [ ! -d "/storage/logs" ]; then
+          mkdir -p /storage/logs
+      fi
+
+    ln -s /storage/thumb /Booklib/public/img/thumb
+    ln -s /storage/logs /Booklib/storage/logs
+
+fi
+
 # Seed the .env file if there is no file present
 if [ ! -f "/storage/.env" ]; then
   cat /Booklib/.env.example | envsubst > /storage/.env
