@@ -58,7 +58,7 @@ RUN echo "* * * * * root php /Booklib/artisan schedule:run" >> /etc/crontab
 
 # Setup application
 RUN cd / && \
-    git clone "https://github.com/booklib-org/booklib.git" && \
+    git clone "https://github.com/booklib-org/booklib.git" /Booklib && \
     ln -s /Booklib/public /var/www/html
 
 COPY docker-conf/empty /storage/thumb
@@ -80,7 +80,7 @@ RUN chown -hR nginx:www-data /Booklib/ && \
     chown -hR nginx:www-data /init.py
 
 # Run Composer Stuff
-RUN cd Booklib/ && \
+RUN cd /Booklib/ && \
     php composer.phar update && \
     php composer.phar install
 
