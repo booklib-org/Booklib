@@ -39,12 +39,15 @@ RUN apt-get -qq update \
     make \
     libzip-dev \
     build-essential \
+    libpq-dev \
     7zip \
     par2 \
     imagemagick \
     libmagickcore-dev \
     supervisor
 
+RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql && docker-php-ext-install pgsql
+RUN docker-php-ext-configure pdo_pgsql && docker-php-ext-install pdo_pgsql
 RUN docker-php-ext-configure gd && docker-php-ext-install gd
 RUN docker-php-ext-configure bcmath && docker-php-ext-install bcmath
 RUN docker-php-ext-configure zip && docker-php-ext-install zip
