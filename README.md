@@ -18,7 +18,7 @@ docker run -d \
   -e DB_DATABASE=<database_name> \
   -e DB_USERNAME=<Username> \
   -e DB_PASSWORD=<Password> \
-  -p 8080:8080 \
+  -p 8080:80 \
   -v /path/to/data:/storage \
   -v /path/to/library:/library \
   --restart unless-stopped \
