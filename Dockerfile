@@ -82,6 +82,8 @@ ADD ./docker-conf/nginx.conf /etc/nginx/nginx.conf
 ADD ./docker-conf/policy.xml /etc/ImageMagick-6/policy.xml
 RUN chmod +x /entrypoint.sh
 
+RUN rm -rf /booklib/.git && rm -rf /booklib/.github
+
 EXPOSE 80
 WORKDIR /booklib
 CMD ["/entrypoint.sh"]
