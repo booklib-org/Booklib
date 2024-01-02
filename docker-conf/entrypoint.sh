@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#Start with latest update
-cd /Booklib; git pull
 
 if mountpoint -q /storage; then
 
@@ -11,28 +9,35 @@ if mountpoint -q /storage; then
    if [ ! -d "/storage/logs" ]; then
           mkdir -p /storage/logs
       fi
-
-    ln -s /storage/thumb /Booklib/public/img/thumb
-    ln -s /storage/logs /Booklib/storage/logs
+    if [ ! -d "/booklib/public/img" ]; then
+       mkdir -p /booklib/public/img
+   fi
+    if [ ! -d "/booklib/public/img/thumb" ]; then
+          mkdir -p /booklib/public/img/thumb
+      fi
+    ln -s /storage/thumb /booklib/public/img/thumb
+    rm -rf /booklib/storage/logs
+    ln -s /storage/logs /booklib/storage
 
 fi
 
 # Seed the .env file if there is no file present
 if [ ! -f "/storage/.env" ]; then
-  cat /Booklib/.env.example | envsubst > /storage/.env
+  cat /booklib/.env.example > /booklib/.env
   php artisan key:generate
+
+  mv /booklib/.env /storage/.env
+
 fi
 
-cd /Booklib/ ; php composer.phar update ; php composer.phar install
-
-copy /storage/.env /Booklib/.env
-
+cp /storage/.env /booklib/.env
+php artisan config:cache
 # Run PHP preparation commands
 php artisan migrate
 php artisan db:seed
 
 # Set permissions for logging folder
-chmod -R 777 /Booklib/storage
+chmod -R 777 /booklib/storage
 
 # Start supervisord and services
 exec /usr/bin/supervisord -n -c /etc/supervisord.conf

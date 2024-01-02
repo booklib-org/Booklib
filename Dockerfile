@@ -1,79 +1,87 @@
-FROM alpine:3.19
+FROM php:8.3-fpm
 LABEL Maintainer="Martijn Katerbarg <https://github.com/booklib-org/booklib>"
 LABEL Description="Full Stack Container with Booklib, Nginx, PHP8.3 on Alpine 3.19 - Needs MySQL to function, please read README."
 VOLUME [ "/storage", "/library" ]
+ARG DEBIAN_FRONTEND=noninteractive
 
-USER root
+# Default Env
+ENV \
+  APP_NAME="Booklib" \
+  APP_ENV="local" \
+  APP_DEBUG="false" \
+  LOG_CHANNEL="stack" \
+  LOG_DEPRECATIONS_CHANNEL="null" \
+  LOG_LEVEL="debug" \
+  BROADCAST_DRIVER="log" \
+  CACHE_DRIVER="file" \
+  FILESYSTEM_DISK="local" \
+  QUEUE_CONNECTION="sync" \
+  SESSION_DRIVER="file" \
+  SESSION_LIFETIME="120" \
+  UPLOAD_LIMIT="1024M" \
+  PHP_UPLOAD_LIMIT="1024M" \
+  MEMORY_LIMIT="1024M" \
+  PHP_MEMORY_LIMIT="1024M"
+
+# Add in code
+ADD . /booklib/
+
+
 
 # Install packages and remove default server definition
-RUN apk --no-cache add \
+RUN apt-get -qq update \
+    && apt-get -y upgrade\
+    && apt-get install -y \
     python3 \
-    curl \
     nginx \
+    curl \
     git \
-    php83 \
-    php83-ctype \
-    php83-curl \
-    php83-dom \
-    php83-fpm \
-    php83-gd \
-    php83-intl \
-    php83-json \
-    php83-mbstring \
-    php83-mysqli \
-    php83-opcache \
-    php83-openssl \
-    php83-phar \
-    php83-session \
-    php83-xml \
-    php83-xmlreader \
-    php83-zlib \
-    php83-zip \
-    php83-fileinfo \
-    php83-xmlwriter \
-    php83-tokenizer \
-    php83-pdo_mysql \
-    imagemagick-dev \
-    imagemagick \
     make \
-    build-base \
+    libzip-dev \
+    build-essential \
     7zip \
-    par2cmdline \
-    python3 \
+    par2 \
+    imagemagick \
+    libmagickcore-dev \
     supervisor
 
-# Create symlinks for programs that expect specific things
-RUN ln -s /usr/bin/php83 /usr/bin/php
+RUN docker-php-ext-configure gd && docker-php-ext-install gd
+RUN docker-php-ext-configure bcmath && docker-php-ext-install bcmath
+RUN docker-php-ext-configure zip && docker-php-ext-install zip
+RUN docker-php-ext-configure pdo_mysql && docker-php-ext-install pdo_mysql
+RUN docker-php-ext-configure mysqli && docker-php-ext-install mysqli
+RUN docker-php-ext-configure opcache && docker-php-ext-install opcache
+RUN docker-php-ext-configure intl && docker-php-ext-install intl
+
+RUN sed -i \
+        -e "s/;listen.mode = 0660/listen.mode = 0666/g" \
+        -e "s/listen = 127.0.0.1:9000/listen = \/var\/run\/php-fpm.sock/g" \
+        /usr/local/etc/php-fpm.d/www.conf
 
 RUN curl -o /tmp/unrar.tar.gz -L "https://www.rarlab.com/rar/unrarsrc-6.2.6.tar.gz"
 RUN mkdir /tmp/unrar && tar xf /tmp/unrar.tar.gz -C /tmp/unrar --strip-components=1 && cd /tmp/unrar && make && install -v -m755 unrar /usr/bin
 
-# Configure App Configs
-COPY docker-conf/nginx.conf /etc/nginx/nginx.conf
-COPY docker-conf/fpm.conf /etc/php8/php-fpm.d/www.conf
-COPY docker-conf/php.ini /etc/php8/conf.d/custom.ini
-COPY docker-conf/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY docker-conf/policy.xml /etc/ImageMagick-7/policy.xml
-RUN echo "* * * * * root php /Booklib/artisan schedule:run" >> /etc/crontab
+RUN cd /booklib \
+  && php composer.phar install \
+  # Set permissions
+  && chown -R www-data:www-data /booklib \
+  # Cleanup
+  && apt-get autoremove -y \
+  && apt-get clean \
+  && echo 'memory_limit = 4096M' >> /usr/local/etc/php/conf.d/docker-php-ram-limit.ini \
+  && echo 'upload_max_filesize = 1024M' >> /usr/local/etc/php/conf.d/docker-php-ram-limit.ini \
+  && echo 'post_max_size = 1024M' >> /usr/local/etc/php/conf.d/docker-php-ram-limit.ini \
+  && rm -rf \
+    /tmp/* \
+    /var/lib/apt/lists/* \
+    /var/tmp/
 
-# Setup application
-RUN cd / && git clone "https://github.com/booklib-org/booklib.git" /Booklib &&  ln -s /Booklib/public /var/www/html
+ADD ./docker-conf/entrypoint.sh /entrypoint.sh
+ADD ./docker-conf/supervisord.conf /etc/supervisord.conf
+ADD ./docker-conf/nginx.conf /etc/nginx/nginx.conf
+ADD ./docker-conf/policy.xml /etc/ImageMagick-6/policy.xml
+RUN chmod +x /entrypoint.sh
 
-# Make sure files/folders needed by the processes are accessable when they run under the www-data user
-RUN chown -hR nginx:www-data /Booklib/ && \
-    chown -hR nginx:www-data /run && \
-    chown -hR nginx:www-data /var/lib/nginx && \
-    chown -hR nginx:www-data /var/log/nginx && \
-    chown -hR nginx:www-data /Booklib/docker-conf/entrypoint.sh && \
-    chmod +x /Booklib/docker-conf/entrypoint.sh
-
-
-# Final Staging
-USER nginx
-WORKDIR /Booklib
-EXPOSE 8080
-
-CMD [ "/Booklib/docker-conf/entrypoint.sh" ]
-
-# Configure a healthcheck to validate that operating properly
-HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1:8080/fpm-ping
+EXPOSE 80
+WORKDIR /booklib
+CMD ["/entrypoint.sh"]
