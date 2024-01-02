@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DBHandler\LikeHandler;
 use App\Models\Directory;
 use App\Models\File;
 use App\Models\Meta;
@@ -42,14 +43,14 @@ class SearchController extends Controller
 
         if($type == "Filename"){
 
-            $results = File::where("filename", "LIKE", "%$searchString%")->orderBy("filename")->paginate($itemsPerPage, ['*'], "fpage")->appends(request()->query());
+            $results = File::where("filename", LikeHandler::getLikeString(), "%$searchString%")->orderBy("filename")->paginate($itemsPerPage, ['*'], "fpage")->appends(request()->query());
             return view("search.filename")->with([
                 "results" => $results
             ]);
 
         }elseif($type == "Directory"){
 
-            $results = Directory::where("directory_name", "LIKE", "%$searchString%")->orderBy("directory_name")->paginate($itemsPerPage, ['*'], "fpage")->appends(request()->query());
+            $results = Directory::where("directory_name", LikeHandler::getLikeString(), "%$searchString%")->orderBy("directory_name")->paginate($itemsPerPage, ['*'], "fpage")->appends(request()->query());
             return view("search.directory")->with([
                 "results" => $results
             ]);
@@ -59,7 +60,7 @@ class SearchController extends Controller
             $metatype_id = MetaType::where("type", "=", "title")->first()->id;
 
 
-            $results = MetaValue::where("metadata_type", "=", $metatype_id)->where("value", "LIKE", "%$searchString%")->paginate($itemsPerPage, ['*'], "fpage")->appends(request()->query());
+            $results = MetaValue::where("metadata_type", "=", $metatype_id)->where("value", LikeHandler::getLikeString(), "%$searchString%")->paginate($itemsPerPage, ['*'], "fpage")->appends(request()->query());
             return view("search.metatype")->with([
                 "results" => $results
             ]);
@@ -69,7 +70,7 @@ class SearchController extends Controller
             $metatype_id = MetaType::where("type", "=", "creator")->first()->id;
 
 
-            $results = MetaValue::where("metadata_type", "=", $metatype_id)->where("value", "LIKE", "%$searchString%")->paginate($itemsPerPage, ['*'], "fpage")->appends(request()->query());
+            $results = MetaValue::where("metadata_type", "=", $metatype_id)->where("value", LikeHandler::getLikeString(), "%$searchString%")->paginate($itemsPerPage, ['*'], "fpage")->appends(request()->query());
             return view("search.metatype")->with([
                 "results" => $results
             ]);
@@ -79,7 +80,7 @@ class SearchController extends Controller
             $metatype_id = MetaType::where("type", "=", $type)->first()->id;
 
 
-            $results = MetaValue::where("metadata_type", "=", $metatype_id)->where("value", "LIKE", "%$searchString%")->paginate($itemsPerPage, ['*'], "fpage")->appends(request()->query());
+            $results = MetaValue::where("metadata_type", "=", $metatype_id)->where("value", LikeHandler::getLikeString(), "%$searchString%")->paginate($itemsPerPage, ['*'], "fpage")->appends(request()->query());
             return view("search.metatype")->with([
                 "results" => $results
             ]);

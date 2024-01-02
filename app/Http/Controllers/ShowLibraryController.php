@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DBHandler\LikeHandler;
 use App\Models\Directory;
 use App\Models\File;
 use App\Models\Library;
@@ -32,7 +33,7 @@ class ShowLibraryController extends Controller
 
         return view($useView)->with([
             "library" => $library,
-            "directories" => Directory::where("parent_directory_id", "=", 0)->whereIn("library_folder_id", $library->folderIDs())->where("directory_name", "!=", ".")->where("directory", "LIKE", "%" . $request->input("searchDir") . "%")->orderBy("directory_name")->paginate($itemsPerPage)->appends(request()->query()),
+            "directories" => Directory::where("parent_directory_id", "=", 0)->whereIn("library_folder_id", $library->folderIDs())->where("directory_name", "!=", ".")->where("directory", LikeHandler::getLikeString(), "%" . $request->input("searchDir") . "%")->orderBy("directory_name")->paginate($itemsPerPage)->appends(request()->query()),
             "files" => File::where("id", "=", 0)->get(),
             "thumbnailSize" => $thumbnailSize,
             "showCounters" => $showCounters
@@ -60,9 +61,9 @@ class ShowLibraryController extends Controller
         return view($useView)->with([
 
             "library" => $library,
-            "directories" => Directory::where("parent_directory_id", "=", $dir)->where("directory_name", "!=", ".")->whereIn("library_folder_id", $library->folderIDs())->where("directory", "LIKE", "%" . $request->input("searchDir") . "%")->orderBy("directory_name")->paginate($itemsPerPage)->appends(request()->query()),
+            "directories" => Directory::where("parent_directory_id", "=", $dir)->where("directory_name", "!=", ".")->whereIn("library_folder_id", $library->folderIDs())->where("directory", LikeHandler::getLikeString(), "%" . $request->input("searchDir") . "%")->orderBy("directory_name")->paginate($itemsPerPage)->appends(request()->query()),
 
-            "files" => File::where("directory_id", "=", $dir)->where("filename", "LIKE", "%" . $request->input("searchFile") . "%")->orderBy("filename")->paginate($itemsPerPage, ['*'], "fpage")->appends(request()->query()),
+            "files" => File::where("directory_id", "=", $dir)->where("filename", LikeHandler::getLikeString(), "%" . $request->input("searchFile") . "%")->orderBy("filename")->paginate($itemsPerPage, ['*'], "fpage")->appends(request()->query()),
             "thumbnailSize" => $thumbnailSize,
             "showCounters" => $showCounters
         ]);

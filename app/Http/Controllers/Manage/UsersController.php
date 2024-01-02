@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Manage;
 
+use App\DBHandler\LikeHandler;
 use App\Exceptions\Handler;
 use App\Http\Controllers\Controller;
 use App\Jobs\RemoveLibraryFolder;
@@ -24,7 +25,7 @@ class UsersController extends Controller
         if(key_exists("search", $r->input())){
 
             return view("manage.users.index")->with([
-                "users" => User::where("username", "LIKE", "%" . $r->input("search") . "%")->orderBy("username")->paginate(20)
+                "users" => User::where("username", LikeHandler::getLikeString(), "%" . $r->input("search") . "%")->orderBy("username")->paginate(20)
             ]);
 
         }else{

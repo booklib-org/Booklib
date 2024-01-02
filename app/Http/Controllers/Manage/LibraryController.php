@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Manage;
 
+use App\DBHandler\LikeHandler;
 use App\Http\Controllers\Controller;
 use App\Jobs\RemoveLibraryFolder;
 use App\Jobs\RescanLibrary;
@@ -24,7 +25,7 @@ class LibraryController extends Controller
         if(key_exists("search", $r->input())){
 
             return view("manage.libraries.index")->with([
-                "libraries" => Library::where("name", "LIKE", "%" . $r->input("search") . "%")->orderBy("name")->paginate(20)
+                "libraries" => Library::where("name", LikeHandler::getLikeString(), "%" . $r->input("search") . "%")->orderBy("name")->paginate(20)
             ]);
 
         }else{
