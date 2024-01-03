@@ -12,9 +12,7 @@ if mountpoint -q /storage; then
     if [ ! -d "/booklib/public/img" ]; then
        mkdir -p /booklib/public/img
    fi
-    if [ ! -d "/booklib/public/img/thumb" ]; then
-          mkdir -p /booklib/public/img/thumb
-      fi
+
     ln -s /storage/thumb /booklib/public/img/thumb
     rm -rf /booklib/storage/logs
     ln -s /storage/logs /booklib/storage
@@ -38,6 +36,7 @@ php artisan db:seed
 
 # Set permissions for logging folder
 chmod -R 777 /booklib/storage
+chmod  777 /booklib/public/img/thumb
 
 # Start supervisord and services
 exec /usr/bin/supervisord -n -c /etc/supervisord.conf
