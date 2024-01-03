@@ -45,6 +45,7 @@ class GenerateThumbnails extends Command
     {
 
         foreach(File::where("has_thumbnail", "=", false)->where("thumbnail_generation_tried", "=", false)->get() as $file){
+            exec("mkdir -pv \"" . storage_path("app/tmp/thumbnails/") . "\"");
             $file->thumbnail_generation_tried = true;
             $file->save();
             if(file_exists($file->directory->directory . "/" . $file->filename)){
@@ -93,7 +94,7 @@ class GenerateThumbnails extends Command
                     unset($fileToExport);
 
                     exec("rm -rf \"" . storage_path("app/tmp/thumbnails/") . "\"");
-                    exec("mkdir \"" . storage_path("app/tmp/thumbnails/") . "\"");
+
 
 
                 }elseif(str_ends_with(strtolower($file->filename), ".cbz")){
@@ -115,7 +116,7 @@ class GenerateThumbnails extends Command
                         $za->close();
 
                         exec("rm -rf \"" . storage_path("app/tmp/thumbnails/") . "\"");
-                        exec("mkdir \"" . storage_path("app/tmp/thumbnails/") . "\"");
+
 
                     }
 
@@ -129,7 +130,7 @@ class GenerateThumbnails extends Command
                     $this->SaveThumb("1.jpg", $file);
 
                     exec("rm -rf \"" . storage_path("app/tmp/thumbnails/") . "\"");
-                    exec("mkdir \"" . storage_path("app/tmp/thumbnails/") . "\"");
+
 
                 }elseif(str_ends_with(strtolower($file->filename), ".epub")){
                     if(getenv('APP_DEBUG') == true){

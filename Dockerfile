@@ -44,11 +44,16 @@ RUN apt-get -qq update \
     par2 \
     imagemagick \
     libmagickcore-dev \
+    libgd-dev \
+    zlib1g \
+    libpng-dev \
+    zlib1g-dev \
+    libpng-tools \
     supervisor
 
 RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql && docker-php-ext-install pgsql
 RUN docker-php-ext-configure pdo_pgsql && docker-php-ext-install pdo_pgsql
-RUN docker-php-ext-configure gd && docker-php-ext-install gd
+RUN docker-php-ext-configure gd --with-jpeg --with-webp && docker-php-ext-install gd
 RUN docker-php-ext-configure bcmath && docker-php-ext-install bcmath
 RUN docker-php-ext-configure zip && docker-php-ext-install zip
 RUN docker-php-ext-configure pdo_mysql && docker-php-ext-install pdo_mysql
