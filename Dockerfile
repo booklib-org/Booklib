@@ -35,6 +35,7 @@ RUN apt-get -qq update \
     python3 \
     nginx \
     curl \
+    cron \
     git \
     pdftk \
     make \
@@ -91,7 +92,6 @@ ADD ./docker-conf/nginx.conf /etc/nginx/nginx.conf
 ADD ./docker-conf/policy.xml /etc/ImageMagick-6/policy.xml
 
 RUN echo "* * * * * root php /booklib/artisan schedule:run" >> /etc/crontab
-RUN echo "* * * * * root php /booklib/artisan queue:work --queue=high,default --sleep=3 --tries=3 --timeout=600" >> /etc/crontab
 
 RUN chmod +x /entrypoint.sh
 

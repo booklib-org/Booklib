@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Job;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -32,7 +33,6 @@ class RescanLibrary implements ShouldQueue
      */
     public function handle()
     {
-
         Artisan::call("Scan:Library");
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Jobs\RescanLibrary;
 use App\Models\Setting;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -25,35 +26,34 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-         $schedule->command('queue:work --stop-when-empty')->everyMinute()->withoutOverlapping();
 
          switch(Setting::where("setting", "=", "scanning_frequency")->first()->value) {
              case "Every 15 Minutes":
-                 $schedule->command("Scan:Library")->everyFifteenMinutes()->withoutOverlapping();
+                 $schedule->job(new RescanLibrary())->everyFifteenMinutes();
 
                  break;
              case "Every 30 Minutes":
-                 $schedule->command("Scan:Library")->everyThirtyMinutes()->withoutOverlapping();
+                 $schedule->job(new RescanLibrary())->everyThirtyMinutes();
 
                  break;
              case "Every Hour":
-                 $schedule->command("Scan:Library")->hourly()->withoutOverlapping();
+                 $schedule->job(new RescanLibrary())->hourly();
 
                  break;
              case "Every 3 Hours":
-                 $schedule->command("Scan:Library")->everyThreeHours()->withoutOverlapping();
+                 $schedule->job(new RescanLibrary())->everyThreeHours();
 
                  break;
              case "Every 6 Hours":
-                 $schedule->command("Scan:Library")->everySixHours()->withoutOverlapping();
+                 $schedule->job(new RescanLibrary())->everySixHours();
 
                  break;
              case "Every 12 Hours":
-                 $schedule->command("Scan:Library")->twiceDaily(1, 13)->withoutOverlapping();
+                 $schedule->job(new RescanLibrary())->twiceDaily(1, 13);
 
                  break;
              case "Every 24 Hours":
-                 $schedule->command("Scan:Library")->daily()->withoutOverlapping();
+                 $schedule->job(new RescanLibrary())->daily();
 
                  break;
          }
