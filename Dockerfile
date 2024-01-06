@@ -36,6 +36,7 @@ RUN apt-get -qq update \
     nginx \
     curl \
     git \
+    pdftk \
     make \
     libzip-dev \
     build-essential \
