@@ -224,12 +224,12 @@ class GenerateThumbnails extends Command
                     $thumbnailQuality = Setting::where("setting", "=", "thumbnail_quality")->first();
 
                     if($thumbnailQuality->value == "High"){
-                        $compression = 0;
+                        $compression = 100;
                     }elseif($thumbnailQuality->value == "Medium"){
-                        $compression = 5;
+                        $compression = 75;
                     }
                     elseif($thumbnailQuality->value == "Low"){
-                        $compression = 9;
+                        $compression = 25;
                     }
 
                     imagejpeg($thumbnail, public_path("/img/thumb/" . $file->id . ".jpg"), $compression);
