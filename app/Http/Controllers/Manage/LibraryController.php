@@ -72,7 +72,7 @@ class LibraryController extends Controller
                 $d->save();
 
             }
-            RescanLibrary::dispatch()->delay(now()->addMinutes(1));
+            RescanLibrary::dispatchAfterResponse()->delay(now()->addseconds(10));
             return redirect("/manage/libraries")->with(["success" => true, "message" => "The library was added. Indexing will begin shortly."]);
 
 
