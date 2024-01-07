@@ -82,6 +82,6 @@ class RemoveLibraryFolder implements ShouldQueue
             $library->total_files = $fileCounterForLibrary;
             $library->save();
         }
-        Artisan::call("Scan:Library");
+        
     }
 }

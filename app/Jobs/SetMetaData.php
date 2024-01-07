@@ -1,66 +1,61 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Jobs;
 
 use App\DBHandler\LikeHandler;
 use App\Models\File;
-use App\Models\Meta;
 use App\Models\MetaType;
 use App\Models\MetaValue;
-use Illuminate\Console\Command;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use lywzx\epub\EpubParser;
 
-class SetMetaData extends Command
+class SetMetaData implements ShouldQueue
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'Set:MetaData';
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Command description';
-
-    /**
-     * Create a new command instance.
-     *
-     * @return void
+     * Create a new job instance.
      */
     public function __construct()
     {
-        parent::__construct();
+        //
     }
 
     /**
-     * Execute the console command.
-     *
-     * @return int
+     * Execute the job.
      */
     public function handle()
     {
-        foreach(File::where("has_metadata", "=", false)->where("filename", LikeHandler::getLikeString(), "%.epub")->get() as $file){
+
+        if(file_exists("/tmp/SetMetaData.lock")){
+            return 0;
+        }else{
+            exec("touch /tmp/SetMetaData.lock");
+        }
+
+        foreach(File::where("has_metadata", "=", false)->where("filename", LikeHandler::getLikeString(), "%.epub")->take(100)->get() as $file){
             echo "Setting metadata for: $file->filename\n";
             try{
-            $epubParser = new EpubParser($file->directory->directory . "/" . $file->filename);
+                $epubParser = new EpubParser($file->directory->directory . "/" . $file->filename);
 
-               $epubParser->parse();
-           }catch (\ErrorException $e){
-               unset($e);
-               continue;
-           }
-           catch (\Exception $e){
-               unset($e);
-               continue;
-           }
-           catch (\TypeError $e){
-               unset($e);
-               continue;
-           }
+                $epubParser->parse();
+            }catch (\ErrorException $e){
+                unset($e);
+                continue;
+            }
+            catch (\Exception $e){
+                unset($e);
+                continue;
+            }
+            catch (\TypeError $e){
+                unset($e);
+                continue;
+            }
 
 
             foreach($epubParser->getDcItem() as $key => $value){
@@ -116,6 +111,12 @@ class SetMetaData extends Command
 
         }
 
+        unlink("/tmp/SetMetaData.lock");
+
+        if(File::where("has_metadata", "=", false)->where("filename", LikeHandler::getLikeString(), "%.epub")->count() > 0){
+            $dispatch = SetMetaData::dispatch();
+        }
+
     }
 
     private function SetData($file,$key,$value){
@@ -130,7 +131,7 @@ class SetMetaData extends Command
             ]);
 
             $value = MetaValue::firstOrCreate([
-               "value" => substr(iconv("UTF-8", "ASCII//TRANSLIT",$value), 0, 500),
+                "value" => substr(iconv("UTF-8", "ASCII//TRANSLIT",$value), 0, 500),
                 "file_id" => $file->id,
                 "metadata_type" => $type->id
             ]);
