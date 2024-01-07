@@ -161,16 +161,16 @@ class GenerateThumbnails extends Command
                         unset($epubParser);
                     }catch(\ErrorException $e){
                         unset($e);
-                        $file->has_thumbnail = true;
+                        $file->thumbnail_generation_tried = true;
                         $file->save();
 
                     }catch(\TypeError $e){
                         unset($e);
-                        $file->has_thumbnail = true;
+                        $file->thumbnail_generation_tried = true;
                         $file->save();
                     }catch(\Exception $e){
                         unset($e);
-                        $file->has_thumbnail = true;
+                        $file->thumbnail_generation_tried = true;
                         $file->save();
                     }
 
