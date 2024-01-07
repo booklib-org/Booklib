@@ -114,7 +114,7 @@ class SetMetaData implements ShouldQueue
         unlink("/tmp/SetMetaData.lock");
 
         if(File::where("has_metadata", "=", false)->where("filename", LikeHandler::getLikeString(), "%.epub")->count() > 0){
-            $dispatch = SetMetaData::dispatch();
+            $dispatch = SetMetaData::dispatch()->onConnection('database');
         }
 
     }

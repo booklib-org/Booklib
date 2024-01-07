@@ -198,7 +198,7 @@ class GenerateThumbnails implements ShouldQueue
 
         if(File::where("has_thumbnail", "=", false)->where("thumbnail_generation_tried", "=", false)->count() > 0){
 
-            $dispatch = GenerateThumbnails::dispatch();
+            $dispatch = GenerateThumbnails::dispatch()->onConnection('database');
 
         }
 
