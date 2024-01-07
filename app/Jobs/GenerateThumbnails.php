@@ -1,50 +1,44 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Jobs;
 
 use App\Models\Directory;
 use App\Models\File;
 use App\Models\Setting;
 use App\Models\Thumbnail;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use lywzx\epub\EpubParser;
 
-class GenerateThumbnails extends Command
+class GenerateThumbnails implements ShouldQueue
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'Generate:Thumbnails';
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Command description';
-
-    /**
-     * Create a new command instance.
-     *
-     * @return void
+     * Create a new job instance.
      */
     public function __construct()
     {
-        parent::__construct();
+        //
     }
 
     /**
-     * Execute the console command.
-     *
-     * @return int
+     * Execute the job.
      */
     public function handle()
     {
 
-        foreach(File::where("has_thumbnail", "=", false)->where("thumbnail_generation_tried", "=", false)->get() as $file){
+        if(file_exists("/tmp/GenerateThumbnails.lock")){
+            return 0;
+        }else{
+            exec("touch /tmp/GenerateThumbnails.lock");
+        }
+
+        foreach(File::where("has_thumbnail", "=", false)->where("thumbnail_generation_tried", "=", false)->take(100)->get() as $file){
             exec("mkdir -pv \"" . storage_path("app/tmp/thumbnails/") . "\"");
             $file->thumbnail_generation_tried = true;
             $file->save();
@@ -59,7 +53,7 @@ class GenerateThumbnails extends Command
 
                     exec("unrar lb \"" .
                         str_replace("\"", "\\\"",$file->directory->directory)
-                     . "/" .
+                        . "/" .
 
                         str_replace("\"", "\\\"",$file->filename) . "\"", $files);
                     sort($files);
@@ -180,6 +174,7 @@ class GenerateThumbnails extends Command
             }
 
         }
+
         foreach(Directory::all() as $directory){
             echo $directory->directory . "\n";
             if(!isset($directory->thumbnail)){
@@ -198,6 +193,18 @@ class GenerateThumbnails extends Command
             }
 
         }
+
+        unlink("/tmp/GenerateThumbnails.lock");
+
+        if(File::where("has_thumbnail", "=", false)->where("thumbnail_generation_tried", "=", false)->count() > 0){
+
+            $dispatch = GenerateThumbnails::dispatch();
+
+        }
+
+
+
+
 
 
     }
@@ -251,6 +258,7 @@ class GenerateThumbnails extends Command
             unset($e);
 
         }
+
 
     }
 
