@@ -92,8 +92,8 @@ class RescanLibrary implements ShouldQueue
             $library->touch();
         }
 
-        GenerateThumbnails::dispatchAfterResponse()->onConnection('database')->delay(now()->addseconds(10));
-        SetMetaData::dispatchAfterResponse()->onConnection('database')->delay(now()->addseconds(20));
+        GenerateThumbnails::dispatch()->onConnection('database');
+        SetMetaData::dispatch()->onConnection('database');
     }
 
     private function CalculateDirectoryFiles(Directory $directory)

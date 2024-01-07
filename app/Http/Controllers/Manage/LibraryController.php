@@ -72,8 +72,8 @@ class LibraryController extends Controller
                 $d->save();
 
             }
-            $dispatch = RescanLibrary::dispatch()->onConnection('database')->delay(now()->addseconds(10));
-            return redirect("/manage/libraries")->with(["success" => true, "message" => "The library was added. Indexing will begin shortly. $dispatch"]);
+            RescanLibrary::dispatch()->onConnection('database');
+            return redirect("/manage/libraries")->with(["success" => true, "message" => "The library was added. Indexing will begin shortly."]);
 
 
 
@@ -122,7 +122,7 @@ class LibraryController extends Controller
 
         foreach($x->folders as $folder){
             if(!in_array($folder->path, $request->folder)){
-                RemoveLibraryFolder::dispatch($folder->id);
+                RemoveLibraryFolder::dispatch($folder->id)->onConnection('database');
             }
         }
 
@@ -147,7 +147,7 @@ class LibraryController extends Controller
         $x->total_files = $filecount;
 
         $x->save();
-        RescanLibrary::dispatch();
+        RescanLibrary::dispatch()->onConnection('database');
         return redirect("/manage/libraries")->with(["success" => true, "message" => "The library was updated. A re-scan will be done shortly."]);
 
     }
@@ -163,7 +163,7 @@ class LibraryController extends Controller
         $x = Library::findOrFail($id);
 
         foreach($x->folders as $folder) {
-            RemoveLibraryFolder::dispatch($folder->id);
+            RemoveLibraryFolder::dispatch($folder->id)->onConnection('database');
         }
 
         $x->delete();
