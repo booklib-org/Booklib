@@ -30,6 +30,8 @@ fi
 
 cp /storage/.env /booklib/.env
 php artisan config:cache
+service cron start
+
 # Run PHP preparation commands
 php artisan migrate
 php artisan db:seed

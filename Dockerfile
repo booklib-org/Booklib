@@ -91,7 +91,7 @@ ADD ./docker-conf/supervisord.conf /etc/supervisord.conf
 ADD ./docker-conf/nginx.conf /etc/nginx/nginx.conf
 ADD ./docker-conf/policy.xml /etc/ImageMagick-6/policy.xml
 
-RUN echo "* * * * * root php /booklib/artisan schedule:run" >> /etc/crontab
+RUN echo "* * * * * root php /booklib/artisan schedule:run 2>&1 >> /var/log/crontab.log" >> /etc/crontab
 
 RUN chmod +x /entrypoint.sh
 
