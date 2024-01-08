@@ -38,7 +38,7 @@ class SetMetaData implements ShouldQueue
             exec("touch /tmp/SetMetaData.lock");
         }
 
-        foreach(File::where("has_metadata", "=", false)->where("filename", LikeHandler::getLikeString(), "%.epub")->take(100)->get() as $file){
+        foreach(File::where("has_metadata", "=", false)->where("filename", LikeHandler::getLikeString(), "%.epub")->get() as $file){
             echo "Setting metadata for: $file->filename\n";
             try{
                 $epubParser = new EpubParser($file->directory->directory . "/" . $file->filename);
