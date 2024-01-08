@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Jobs\DirectoryThumbprint;
 use App\Jobs\RescanLibrary;
 use App\Models\Setting;
 use Illuminate\Console\Scheduling\Schedule;
@@ -59,7 +60,7 @@ class Kernel extends ConsoleKernel
          }
 
         $schedule->command('Import:OPDS')->daily();
-
+        $schedule->job(new DirectoryThumbprint())->daily();
     }
 
     /**

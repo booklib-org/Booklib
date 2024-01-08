@@ -175,25 +175,6 @@ class GenerateThumbnails implements ShouldQueue
 
         }
 
-        foreach(Directory::all() as $directory){
-            echo $directory->directory . "\n";
-            if(!isset($directory->thumbnail)){
-
-                foreach($directory->files as $file){
-                    if(isset($file->thumbnail)){
-                        $thumbnail = Thumbnail::findOrFail($file->thumbnail->id);
-
-                        $thumbnail->dir_id = $directory->id;
-                        $thumbnail->save();
-                        break;
-
-                    }
-                }
-
-            }
-
-        }
-
         unlink("/tmp/GenerateThumbnails.lock");
 
         if(File::where("has_thumbnail", "=", false)->where("thumbnail_generation_tried", "=", false)->count() > 0){
@@ -201,11 +182,6 @@ class GenerateThumbnails implements ShouldQueue
             $dispatch = GenerateThumbnails::dispatch()->onConnection('database');
 
         }
-
-
-
-
-
 
     }
 
