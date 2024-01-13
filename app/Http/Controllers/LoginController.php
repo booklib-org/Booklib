@@ -10,6 +10,11 @@ use Illuminate\Validation\Rule;
 
 class LoginController extends Controller
 {
+
+    public function username()
+    {
+        return 'username'; //or return the field which you want to use.
+    }
     public function Show(){
 
         Auth::viaRemember();
