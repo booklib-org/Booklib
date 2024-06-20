@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Handlers\AddFileClass;
 use App\Models\Directory;
 use App\Models\File;
 use App\Models\Job;
@@ -140,12 +141,10 @@ class RescanLibrary implements ShouldQueue
                 if($exists == false){
 
                     if(in_array(strtoupper(pathinfo($file, PATHINFO_EXTENSION)), ["CBR", "CBZ", "PDF", "MOBI", "EPUB"])){
-                        $f = new File();
-                        $f->filename = $file;
-                        $f->filesize = filesize($directory . "/" . $file);
-                        $f->directory_id = $directory_id;
-                        $f->library_id = $library_id;
-                        $f->save();
+
+                        $fileHandler = new AddFileClass();
+                        $fileHandler->addFile($file, $directory, $directory_id, $library_id);
+                        unset($fileHandler);
 
                     }
 
