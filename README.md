@@ -13,7 +13,7 @@ Screenshots can be found at https://imgur.com/a/WTzchmS
 ```bash
 docker run -d \
   --name=booklib \
-  äe DB_TYPE=<mysql|pgsql> \
+  -e DB_TYPE=<mysql|pgsql> \
   -e DB_HOST=<hostname> \
   -e DB_PORT=<port> \
   -e DB_DATABASE=<database_name> \
