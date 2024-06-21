@@ -22,6 +22,7 @@ docker run -d \
   -p 8080:80 \
   -v /path/to/data:/storage \
   -v /path/to/library:/library \
+  -v /path/to/toimport:/import \
   --restart unless-stopped \
   ghcr.io/booklib-org/booklib
 ```

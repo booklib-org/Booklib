@@ -15,5 +15,7 @@ class AddFileClass
         $f->directory_id = $directory_id;
         $f->library_id = $library_id;
         $f->save();
+
+        return $f;
     }
 }

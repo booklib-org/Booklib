@@ -10,6 +10,32 @@ use lywzx\epub\EpubParser;
 class SetMetaDataClass
 {
 
+
+    public function getMobiFileMetaData($filename)
+    {
+        $mobiMetaTypes = [
+            100 => "creator",
+            101 => "publisher",
+            102 => "imprint",
+            103 => "description",
+            104 => "identifier",
+            105 => "subject",
+            106 => "date",
+            108 => "contributor",
+            109 => "rights",
+            110 => "subjectcode",
+            111 => "type",
+            112 => "source",
+            524 => "language"
+
+        ];
+
+        $mobi = new \Choccybiccy\Mobi\Reader($filename);
+
+        return $mobi->getExthHeader();
+
+    }
+
     public function setMobiFileMetaData(File $file)
     {
         $mobiMetaTypes = [
@@ -46,25 +72,18 @@ class SetMetaDataClass
     public function setEpubFileMetaData(File $file)
     {
 
+        $filename = $file->directory->directory . "/" . $file->filename;
         try{
-            $epubParser = new EpubParser($file->directory->directory . "/" . $file->filename);
+            $epubData = shell_exec("exiftool -s \"$filename\" -j | jq 'map(with_entries(.key |= ascii_downcase))'");
 
-            $epubParser->parse();
         }catch (\ErrorException $e){
             unset($e);
             return 0;
         }
-        catch (\Exception $e){
-            unset($e);
-            return 0;
-        }
-        catch (\TypeError $e){
-            unset($e);
-            return 0;
-        }
 
 
-        foreach($epubParser->getDcItem() as $key => $value){
+
+        foreach(json_decode($epubData, true)[0] as $key => $value){
 
             if(is_array($value)){
                 foreach($value as $v){
@@ -83,6 +102,25 @@ class SetMetaDataClass
     }
 
 
+
+    public function getEpubFileMetaData($file)
+    {
+
+        try{
+            $epubData = shell_exec("exiftool -s \"$file\" -j | jq 'map(with_entries(.key |= ascii_downcase))'");
+
+        }catch (\ErrorException $e){
+
+            unset($e);
+            return 0;
+        }
+
+        if(json_decode($epubData)){
+            return json_decode($epubData, true)[0];
+        }
+
+    }
+
     private function SetData($file,$key,$value){
 
 
@@ -93,8 +131,11 @@ class SetMetaDataClass
             $type = MetaType::firstOrCreate([
                 "type" => $key
             ]);
-
+            if(is_array($value)) {
+                $value = $value[0];
+            }
             $value = MetaValue::firstOrCreate([
+
                 "value" => substr(iconv("UTF-8", "ASCII//TRANSLIT",$value), 0, 500),
                 "file_id" => $file->id,
                 "metadata_type" => $type->id

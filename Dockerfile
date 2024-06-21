@@ -35,7 +35,9 @@ RUN apt-get -qq update \
     python3 \
     nginx \
     curl \
+    exiftool \
     cron \
+    jq \
     git \
     pdftk \
     make \
