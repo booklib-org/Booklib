@@ -46,8 +46,7 @@ class ImportFromLocalDirectory extends Command
 
         echo "Getting a complete list of all files in the /import directory\n";
 
-        //TODO: Change this to a config setting
-        $directory = '/Users/martijn/Downloads/booklib-storage/import';
+        $directory = '/import';
 
         $finder = new Finder();
         $finder->files()
