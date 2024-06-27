@@ -90,7 +90,7 @@ class ImportFromLocalDirectory extends Command
                     $titleMetaType = MetaType::where("type", "=", "title")->first()->id ?? 0;
                     $languageMetaType = MetaType::where("type", "=", "language")->first()->id ?? 0;
 
-                    if(!empty($this->option('language')) && $this->option('language') != $meta['language']){
+                    if(!empty($this->option('language')) && strtolower($this->option('language')) != strtolower($meta['language'])){
                         //Skip this book
                         continue;
                     }
