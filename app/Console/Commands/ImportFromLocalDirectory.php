@@ -18,7 +18,7 @@ class ImportFromLocalDirectory extends Command
      *
      * @var string
      */
-    protected $signature = 'app:import-from-local-directory {libraryId} {RemoveDuplicates}';
+    protected $signature = 'app:import-from-local-directory {libraryId} {RemoveDuplicates} {--language=}';
 
     /**
      * The console command description.
@@ -33,6 +33,7 @@ class ImportFromLocalDirectory extends Command
     public function handle()
     {
 //        echo $this->argument('RemoveDuplicates') . PHP_EOL;
+
 
         if($this->argument('RemoveDuplicates') == "true") {
             $removeDuplicates = true;
@@ -89,6 +90,10 @@ class ImportFromLocalDirectory extends Command
                     $titleMetaType = MetaType::where("type", "=", "title")->first()->id ?? 0;
                     $languageMetaType = MetaType::where("type", "=", "language")->first()->id ?? 0;
 
+                    if(!empty($this->option('language')) && $this->option('language') != $meta['language']){
+                        //Skip this book
+                        continue;
+                    }
                     $creatorBooks = MetaValue::where("metadata_type", "=", $creatorMetaType)->where("value", "=", $meta['creator'])->get("file_id");
                     $titleBooks = MetaValue::where("metadata_type", "=", $titleMetaType)->where("value", "=", $meta['title'])->whereIn("file_id", $creatorBooks)->get("file_id");
                     if(MetaValue::where("metadata_type", "=", $languageMetaType)->where("value", "=", $meta['language'])->whereIn("file_id", $titleBooks)->exists()) {
