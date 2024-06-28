@@ -18,7 +18,7 @@ class ImportFromLocalDirectory extends Command
      *
      * @var string
      */
-    protected $signature = 'app:import-from-local-directory {libraryId} {RemoveDuplicates} {--language=}';
+    protected $signature = 'app:import-from-local-directory {--libraryId=} {--removeDuplicates=} {--language=} {--summaryOnly=}';
 
     /**
      * The console command description.
@@ -35,15 +35,22 @@ class ImportFromLocalDirectory extends Command
 //        echo $this->argument('RemoveDuplicates') . PHP_EOL;
 
 
-        if($this->argument('RemoveDuplicates') == "true") {
+        if($this->option('removeDuplicates') == "true") {
             $removeDuplicates = true;
         } else {
             $removeDuplicates = false;
         }
 
-        $libraryId = $this->argument('libraryId');
+        if(empty($this->option('libraryId'))){
+            $this->error("You must specify a libraryId");
+            return 1;
+        }
+        $libraryId = $this->option('libraryId');
         $library = \App\Models\Library::find($libraryId);
 
+        $summaryData = [];
+        $summaryData["language"] = [];
+        $summaryData["totalBooks"] = 0;
 
         echo "Getting a complete list of all files in the /import directory\n";
 
@@ -74,12 +81,28 @@ class ImportFromLocalDirectory extends Command
                 if(!is_array($meta)){
                     continue;
                 }
+
                 //Check if it has a "creator" key
                 if(array_key_exists("creator", $meta) && array_key_exists("title", $meta) && array_key_exists("language", $meta)) {
 
                     if(is_array($meta['creator'])){
                         $meta['creator'] = $meta['creator'][0];
                     }
+                    if(is_array($meta['language'])){
+                        $meta['language'] = $meta['language'][0];
+                    }
+
+                    if($this->option('summaryOnly') == "true"){
+
+                        if(!array_key_exists($meta['language'], $summaryData["language"])) {
+                            $summaryData["language"][$meta['language']] = 0;
+                        }
+                        $summaryData["language"][$meta['language']]++;
+                        $summaryData["totalBooks"]++;
+                        continue;
+
+                    }
+
                     $targetDirectory = $library->folders->first()->path . '/' . $meta['creator'];
                     $this->createTargetDirectory($targetDirectory);
 
@@ -150,6 +173,10 @@ class ImportFromLocalDirectory extends Command
 
             }
 
+        }
+
+        if($this->option('summaryOnly') == "true"){
+            print_r($summaryData);
         }
 
         return 0;
