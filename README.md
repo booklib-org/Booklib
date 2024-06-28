@@ -3,6 +3,14 @@
 ## Summary
 An e-Library system that uses an external database for storage. Designed for large libraries.
 
+## Note
+
+I use this project personally, and due to upcoming needs, features or minor changes and releases sometimes follow in rapid succession. As such, versioning should be treated as:
+
+- X.0.0 - Major release
+- X.X.0 - Stable release
+- X.X.X - Unstable/Testing release, may contain bugs!
+
 ## Screenshots
 Screenshots can be found at https://imgur.com/a/WTzchmS
 
