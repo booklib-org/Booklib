@@ -92,13 +92,14 @@ class ImportFromLocalDirectory extends Command
                         $meta['language'] = $meta['language'][0];
                     }
 
-                    if($this->option('summaryOnly') == "true"){
+
 
                         if(!array_key_exists($meta['language'], $summaryData["language"])) {
                             $summaryData["language"][$meta['language']] = 0;
                         }
                         $summaryData["language"][$meta['language']]++;
                         $summaryData["totalBooks"]++;
+                    if($this->option('summaryOnly') == "true"){
                         continue;
 
                     }
@@ -175,9 +176,8 @@ class ImportFromLocalDirectory extends Command
 
         }
 
-        if($this->option('summaryOnly') == "true"){
+
             print_r($summaryData);
-        }
 
         return 0;
 
