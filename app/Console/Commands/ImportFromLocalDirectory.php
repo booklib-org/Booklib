@@ -187,7 +187,7 @@ class ImportFromLocalDirectory extends Command
 
 
         if (!File::exists($targetDirectory)) {
-            File::makeDirectory($targetDirectory, 0755, true);
+            File::makeDirectory(substr($targetDirectory, 0, 128), 0755, true);
         }
 
     }
