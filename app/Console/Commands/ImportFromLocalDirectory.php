@@ -105,6 +105,7 @@ class ImportFromLocalDirectory extends Command
                     }
 
                     $targetDirectory = $library->folders->first()->path . '/' . $meta['creator'];
+                    $targetDirectory = str_replace("/", "_", $targetDirectory);
                     $this->createTargetDirectory($targetDirectory);
 
                     $targetPath = $targetDirectory . '/' . $file->getFilename();
