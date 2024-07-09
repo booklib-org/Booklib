@@ -84,7 +84,7 @@ class RemoveFromLocalImporDirectory extends Command
 
                     if(!empty($this->option('language')) && strtolower($this->option('language')) == strtolower($meta['language'])){
                         File::delete($file->getRealPath());
-                        echo "Removed file: " . $file->getRealPath() . "\n";
+                        echo "Removed file.\n";
                     }
 
 
