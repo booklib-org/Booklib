@@ -70,7 +70,9 @@ class RemoveFromLocalImporDirectory extends Command
                 //Check if it has a "creator" key
                 if(array_key_exists("language", $meta)) {
 
-
+                    if(is_array($meta['language'])){
+                        $meta['language'] = $meta['language'][0];
+                    }
                     if(!array_key_exists($meta['language'], $summaryData["language"])) {
                         $summaryData["language"][$meta['language']] = 0;
                     }
