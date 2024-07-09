@@ -45,6 +45,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Get the latest commit hash
+        id: vars
+        run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
@@ -53,8 +57,8 @@ jobs:
           context: .
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-          tags: 'dev-latest'
-          labels: 'dev-latest'
+          tags: 'dev-${{ env.COMMIT_HASH }}'
+          labels: 'dev-${{ env.COMMIT_HASH }}'
 
       # Temp fix
       # https://github.com/docker/build-push-action/issues/252
