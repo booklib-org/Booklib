@@ -49,10 +49,11 @@ jobs:
         id: vars
         run: |
           COMMIT_HASH=$(git rev-parse --short HEAD)
-          COMMIT_TIMESTAMP=$(git show -s --format=%cI HEAD | sed 's/+00:00/Z/')
+          COMMIT_TIMESTAMP=$(git show -s --format=%cI HEAD)
+          UTC_TIMESTAMP=$(date -u -d "$COMMIT_TIMESTAMP" +'%Y-%m-%dT%H:%M:%SZ')
           echo "COMMIT_HASH=$COMMIT_HASH" >> $GITHUB_ENV
-          echo "COMMIT_TIMESTAMP=$COMMIT_TIMESTAMP" >> $GITHUB_ENV
-
+          echo "UTC_TIMESTAMP=$UTC_TIMESTAMP" >> $GITHUB_ENV
+          
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
@@ -62,8 +63,8 @@ jobs:
           push: true
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-          tags: ghcr.io/booklib-org/booklib:dev.${{ env.COMMIT_TIMESTAMP }}
-          labels: ghcr.io/booklib-org/booklib:dev.${{ env.COMMIT_TIMESTAMP }}
+          tags: ghcr.io/booklib-org/booklib:dev.${{ env.UTC_TIMESTAMP }}
+          labels: ghcr.io/booklib-org/booklib:dev.${{ env.UTC_TIMESTAMP }}
 
       # Temp fix
       # https://github.com/docker/build-push-action/issues/252
