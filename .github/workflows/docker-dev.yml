@@ -45,17 +45,25 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Get the latest commit hash and timestamp
+        id: vars
+        run: |
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          COMMIT_TIMESTAMP=$(git show -s --format=%ct HEAD)
+          echo "COMMIT_HASH=$COMMIT_HASH" >> $GITHUB_ENV
+          echo "COMMIT_TIMESTAMP=$COMMIT_TIMESTAMP" >> $GITHUB_ENV
+          
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
+          push: true
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: 'dev-latest'
-          labels: 'dev-latest'
+          tags: ghcr.io/booklib-org/booklib:dev.${{ env.COMMIT_TIMESTAMP }}
+          labels: ghcr.io/booklib-org/booklib:dev.${{ env.COMMIT_TIMESTAMP }}
 
       # Temp fix
       # https://github.com/docker/build-push-action/issues/252
