@@ -166,7 +166,7 @@ class ImportFromLocalDirectory extends Command
                     $parentdir = Directory::firstOrCreate([
                         "directory" => $targetDirectory,
                         "library_folder_id" => $library->id,
-                        "parent_directory_id" => 0,
+                        "parent_directory_id" => $library->folders->first()->id,
                         "directory_name" => $meta['creator']
                     ]);
 
