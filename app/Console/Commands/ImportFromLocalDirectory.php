@@ -105,7 +105,7 @@ class ImportFromLocalDirectory extends Command
                     }
 
                     $targetDirectory = $library->folders->first()->path . '/' . str_replace("/", "_", substr($meta['creator'], 0, 128));
-                    $this->createTargetDirectory($targetDirectory);
+
 
                     $targetPath = $targetDirectory . '/' . $file->getFilename();
 
@@ -146,6 +146,7 @@ class ImportFromLocalDirectory extends Command
 
                         continue;
                     }
+                    $this->createTargetDirectory($targetDirectory);
                     if($removeDuplicates) {
                         if (File::move($file->getRealPath(), $targetPath)) {
                             $this->info("Moved: " . $file->getRealPath() . " to $targetPath");
