@@ -137,8 +137,6 @@ class ImportFromLocalDirectory extends Command
                     if(File::exists($targetPath)){
                         $this->error("File already exists: " . $targetPath);
 
-                        //TODO: Debug in which cases the metadata check fails
-                        exit;
                         if($removeDuplicates) {
                             $this->info("Removing duplicate file: " . $file->getRealPath());
                             File::delete($file->getRealPath());
