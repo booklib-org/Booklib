@@ -120,16 +120,39 @@ class ImportFromLocalDirectory extends Command
                     }
                     $creatorBooks = MetaValue::where("metadata_type", "=", $creatorMetaType)->where("value", "=", $meta['creator'])->get("file_id");
                     $titleBooks = MetaValue::where("metadata_type", "=", $titleMetaType)->where("value", "=", $meta['title'])->whereIn("file_id", $creatorBooks)->get("file_id");
-                    if(MetaValue::where("metadata_type", "=", $languageMetaType)->where("value", "=", $meta['language'])->whereIn("file_id", $titleBooks)->exists()) {
+                    $titleBooksExists = MetaValue::where("metadata_type", "=", $titleMetaType)->where("value", "=", $meta['title'])->whereIn("file_id", $creatorBooks)->exists();
+                    $languageBooksExists = MetaValue::where("metadata_type", "=", $languageMetaType)->where("value", "=", $meta['language'])->whereIn("file_id", $titleBooks)->exists();
+
+                    if(empty($this->option('language'))) {
+
+                        if($titleBooksExists) {
 
                             $this->info("File already exists: " . $file->getRealPath());
 
-                            if($removeDuplicates) {
+                            if ($removeDuplicates) {
                                 $this->info("Removing duplicate file: " . $file->getRealPath());
                                 File::delete($file->getRealPath());
 
                             }
-                        continue;
+                            continue;
+                        }
+
+                    }
+
+                    if(!empty($this->option('language'))) {
+
+                        if($languageBooksExists) {
+
+                            $this->info("File already exists: " . $file->getRealPath());
+
+                            if ($removeDuplicates) {
+                                $this->info("Removing duplicate file: " . $file->getRealPath());
+                                File::delete($file->getRealPath());
+
+                            }
+                            continue;
+                        }
+
                     }
 
                     $addFile = new AddFileClass();
