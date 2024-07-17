@@ -83,21 +83,23 @@ class ImportFromLocalDirectory extends Command
                 }
 
                 //Check if it has a "creator" key
-                if(array_key_exists("creator", $meta) && array_key_exists("title", $meta) && array_key_exists("language", $meta)) {
+                if(array_key_exists("creator", $meta) && array_key_exists("title", $meta)) {
 
                     if(is_array($meta['creator'])){
                         $meta['creator'] = $meta['creator'][0];
                     }
-                    if(is_array($meta['language'])){
+                    if(isset($meta['language']) && is_array($meta['language'])){
                         $meta['language'] = $meta['language'][0];
                     }
 
 
 
-                        if(!array_key_exists($meta['language'], $summaryData["language"])) {
+                        if(isset($meta['language']) && !array_key_exists($meta['language'], $summaryData["language"])) {
                             $summaryData["language"][$meta['language']] = 0;
                         }
-                        $summaryData["language"][$meta['language']]++;
+                        if(isset($meta['language'])){
+                            $summaryData["language"][$meta['language']]++;
+                        }
                         $summaryData["totalBooks"]++;
                     if($this->option('summaryOnly') == "true"){
                         continue;
@@ -114,14 +116,16 @@ class ImportFromLocalDirectory extends Command
                     $titleMetaType = MetaType::where("type", "=", "title")->first()->id ?? 0;
                     $languageMetaType = MetaType::where("type", "=", "language")->first()->id ?? 0;
 
-                    if(!empty($this->option('language')) && strtolower($this->option('language')) != strtolower($meta['language'])){
+                    if(!empty($this->option('language')) && array_key_exists("language", $meta) && strtolower($this->option('language')) != strtolower($meta['language'])){
                         //Skip this book
                         continue;
                     }
                     $creatorBooks = MetaValue::where("metadata_type", "=", $creatorMetaType)->where("value", "=", $meta['creator'])->get("file_id");
                     $titleBooks = MetaValue::where("metadata_type", "=", $titleMetaType)->where("value", "=", $meta['title'])->whereIn("file_id", $creatorBooks)->get("file_id");
                     $titleBooksExists = MetaValue::where("metadata_type", "=", $titleMetaType)->where("value", "=", $meta['title'])->whereIn("file_id", $creatorBooks)->exists();
-                    $languageBooksExists = MetaValue::where("metadata_type", "=", $languageMetaType)->where("value", "=", $meta['language'])->whereIn("file_id", $titleBooks)->exists();
+                    if(isset($meta['language'])){
+                        $languageBooksExists = MetaValue::where("metadata_type", "=", $languageMetaType)->where("value", "=", $meta['language'])->whereIn("file_id", $titleBooks)->exists();
+                    }
 
                     if(empty($this->option('language'))) {
 
@@ -139,7 +143,7 @@ class ImportFromLocalDirectory extends Command
 
                     }
 
-                    if(!empty($this->option('language'))) {
+                    if(!empty($this->option('language')) && isset($meta['language'])) {
 
                         if($languageBooksExists) {
 
@@ -189,7 +193,7 @@ class ImportFromLocalDirectory extends Command
                         "directory" => $targetDirectory,
                         "library_folder_id" => $library->id,
                         "parent_directory_id" => $library->folders->first()->id,
-                        "directory_name" => $meta['creator']
+                        "directory_name" => str_replace("/", "_", trim(substr($meta['creator'], 0, 128)))
                     ]);
 
                     $newFile = $addFile->addFile($file->getFilename(), $targetDirectory, $parentdir->id, $library->id);
