@@ -51,6 +51,7 @@ class ImportFromLocalDirectory extends Command
         $summaryData = [];
         $summaryData["language"] = [];
         $summaryData["totalBooks"] = 0;
+        $summaryData["extensions"] = [];
 
         echo "Getting a complete list of all files in the /import directory\n";
 
@@ -62,20 +63,26 @@ class ImportFromLocalDirectory extends Command
             ->name('/\.epub$/i')
             ->name('/\.mobi$/i');
 
+        $summaryData["extensions"]["mobi"]=0;
+        $summaryData["extensions"]["epub"]=0;
+
         echo "Found " . $finder->count() . " files in the /import directory\n";
         echo "Starting import process\n";
 
         foreach ($finder as $file) {
             $metadata = new SetMetaDataClass();
 
-            echo "Processing file: " . $file->getRealPath() . "\n";
-            $meta = $metadata->getEpubFileMetaData($file->getRealPath());
+            $summaryData["extensions"][pathinfo($file->getRealPath(), PATHINFO_EXTENSION)]++;
 
-            if(!is_array($meta)){
-                continue;
-            }
 
             if(str_ends_with($file->getRealPath(), ".epub")) {
+
+                echo "Processing file: " . $file->getRealPath() . "\n";
+                $meta = $metadata->getEpubFileMetaData($file->getRealPath());
+
+                if(!is_array($meta)){
+                    continue;
+                }
 
                 $meta = $metadata->getEpubFileMetaData($file->getRealPath());
                 if(!is_array($meta)){
