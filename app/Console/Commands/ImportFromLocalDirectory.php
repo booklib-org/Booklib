@@ -70,15 +70,21 @@ class ImportFromLocalDirectory extends Command
         echo "Starting import process\n";
 
         foreach ($finder as $file) {
-            $metadata = new SetMetaDataClass();
 
+            $metadata = new SetMetaDataClass();
             $summaryData["extensions"][strtolower(pathinfo($file->getRealPath(), PATHINFO_EXTENSION))]++;
 
 
             if(str_ends_with(strtolower($file->getRealPath()), ".epub")) {
 
                 echo "Processing file: " . $file->getRealPath() . "\n";
-                $meta = $metadata->getEpubFileMetaData($file->getRealPath());
+                if(!file_exists($file->getRealPath() . ".bmf")){
+                    $meta = $metadata->getEpubFileMetaData($file->getRealPath());
+                    file_put_contents($file->getRealPath() . ".bmf", json_encode($meta));
+                }else{
+                    $meta = json_decode(file_get_contents($file->getRealPath() . ".bmf"));
+                }
+
 
                 if(!is_array($meta)){
                     continue;
