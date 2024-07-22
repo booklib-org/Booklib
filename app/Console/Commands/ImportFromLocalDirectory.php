@@ -82,7 +82,7 @@ class ImportFromLocalDirectory extends Command
                     $meta = $metadata->getEpubFileMetaData($file->getRealPath());
                     file_put_contents($file->getRealPath() . ".bmf", json_encode($meta));
                 }else{
-                    $meta = json_decode(file_get_contents($file->getRealPath() . ".bmf"));
+                    $meta = json_decode(file_get_contents($file->getRealPath() . ".bmf"), true);
                 }
 
 
