@@ -32,15 +32,12 @@ class ImportFromLocalDirectory extends Command
      */
     public function handle()
     {
-//        echo $this->argument('RemoveDuplicates') . PHP_EOL;
-
 
         if($this->option('removeDuplicates') == "true") {
             $removeDuplicates = true;
         } else {
             $removeDuplicates = false;
         }
-
 
         if(empty($this->option('libraryId'))){
             $this->error("You must specify a libraryId");
@@ -125,7 +122,7 @@ class ImportFromLocalDirectory extends Command
                     $titleMetaType = MetaType::where("type", "=", "title")->first()->id ?? 0;
                     $languageMetaType = MetaType::where("type", "=", "language")->first()->id ?? 0;
 
-                    if(!empty($this->option('language')) && array_key_exists("language", $meta) && strtolower($this->option('language')) != strtolower($meta['language'])){
+                    if(!empty($this->option('language')) && array_key_exists("language", $meta) && !in_array(strtolower($meta['language']), explode(",", $this->option('language')))){
                         //Skip this book
                         continue;
                     }
