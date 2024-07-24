@@ -18,7 +18,7 @@ class ImportFromLocalDirectory extends Command
      *
      * @var string
      */
-    protected $signature = 'app:import-from-local-directory {--libraryId=} {--removeDuplicates=} {--language=} {--summaryOnly=}';
+    protected $signature = 'app:import-from-local-directory {--libraryId=} {--removeDuplicates=} {--language=} {--summaryOnly=} {--searchIsbnDB=}';
 
     /**
      * The console command description.
