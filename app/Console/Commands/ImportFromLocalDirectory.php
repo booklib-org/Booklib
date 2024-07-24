@@ -18,7 +18,7 @@ class ImportFromLocalDirectory extends Command
      *
      * @var string
      */
-    protected $signature = 'app:import-from-local-directory {--libraryId=} {--removeDuplicates=} {--language=} {--summaryOnly=} {--searchIsbnDB=}';
+    protected $signature = 'app:import-from-local-directory {--libraryId=} {--removeDuplicates=} {--language=} {--summaryOnly=} ';
 
     /**
      * The console command description.
@@ -40,6 +40,7 @@ class ImportFromLocalDirectory extends Command
         } else {
             $removeDuplicates = false;
         }
+
 
         if(empty($this->option('libraryId'))){
             $this->error("You must specify a libraryId");
