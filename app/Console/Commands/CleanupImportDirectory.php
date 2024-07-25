@@ -12,7 +12,7 @@ class CleanupImportDirectory extends Command
      *
      * @var string
      */
-    protected $signature = 'app:cleanup-import-directory';
+    protected $signature = 'app:cleanup-import-directory {--removeAdditionalExtensions=}';
 
     /**
      * The console command description.
@@ -33,6 +33,9 @@ class CleanupImportDirectory extends Command
             ->in($directory);
 
         $extensions = [];
+
+        $removeExtensions = explode(",", $this->option('removeAdditionalExtensions'));
+
         foreach($finder as $file) {
 
             //Count the number of files for each extension
@@ -48,6 +51,11 @@ class CleanupImportDirectory extends Command
                     echo "Removing " . $file->getRealPath() . "\n";
                     unlink($file->getRealPath());
                 }
+            }
+
+            if(in_array($file->getExtension(), $removeExtensions)){
+                echo "Removing " . $file->getRealPath() . "\n";
+                unlink($file->getRealPath());
             }
 
         }
