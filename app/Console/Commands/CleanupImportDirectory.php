@@ -48,16 +48,21 @@ class CleanupImportDirectory extends Command
         $finder->directories()
             ->in($directory);
 
+        $removeDirectories = [];
         foreach($finder as $directory) {
 
             $finder2 = new Finder();
 
             if(!$finder2->in($directory->getRealPath())->hasResults()){
-                echo "Removing " . $directory->getRealPath() . "\n";
-                rmdir($directory->getRealPath());
+                $removeDirectories[] = $directory->getRealPath();
             }
 
             unset($finder2);
+        }
+
+        foreach($removeDirectories as $directory){
+            echo "Removing " . $directory . "\n";
+            rmdir($directory);
         }
     }
 }
