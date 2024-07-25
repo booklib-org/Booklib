@@ -30,18 +30,29 @@ class CleanupImportDirectory extends Command
 
         $finder = new Finder();
         $finder->files()
-            ->in($directory)
-            ->name('/\.bmf/i');
+            ->in($directory);
 
+        $extensions = [];
         foreach($finder as $file) {
 
+            //Count the number of files for each extension
+            if(!isset($extensions[$file->getExtension()])){
+                $extensions[$file->getExtension()] = 1;
+            } else {
+                $extensions[$file->getExtension()]++;
+            }
+
             //if the .epub file does not exist, delete the .bmf file
-            if(!file_exists(str_replace('.bmf', '', $file->getRealPath()))){
-                echo "Removing " . $file->getRealPath() . "\n";
-                unlink($file->getRealPath());
+            if($file->getExtension() == 'bmf'){
+                if(!file_exists(str_replace('.bmf', '', $file->getRealPath()))){
+                    echo "Removing " . $file->getRealPath() . "\n";
+                    unlink($file->getRealPath());
+                }
             }
 
         }
+
+        print_r($extensions);
 
         unset($finder);
         $finder = new Finder();
