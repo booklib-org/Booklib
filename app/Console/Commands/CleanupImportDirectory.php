@@ -12,7 +12,7 @@ class CleanupImportDirectory extends Command
      *
      * @var string
      */
-    protected $signature = 'app:cleanup-import-directory {--removeAdditionalExtensions=}';
+    protected $signature = 'app:cleanup-import-directory {--removeAdditionalExtensions=} {--removeDefaultExtensions=}';
 
     /**
      * The console command description.
@@ -36,6 +36,9 @@ class CleanupImportDirectory extends Command
 
         $removeExtensions = explode(",", $this->option('removeAdditionalExtensions'));
 
+        if($this->option('removeDefaultExtensions') == "true"){
+            $removeExtensions = array_merge($removeExtensions, explode(",", "pyo,exe,pyd,dll,zip,xml,ico,manifest,recipe,png,bat,sh,py,pickle,js,qrc,sql,types,json,jpg,gif,css,xhtml,html,otf,ttf,mo,xsl,tmpl,db,opf,nfo,doc,txt,original_epub,par2,nzb,lnk,epu,ini,par,EPU,rar,url,reg"));
+        }
         foreach($finder as $file) {
 
             //Count the number of files for each extension
