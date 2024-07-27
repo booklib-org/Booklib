@@ -94,18 +94,22 @@ class ImportFromLocalDirectory extends Command
                     if(is_array($meta['creator'])){
                         $meta['creator'] = $meta['creator'][0];
                     }
+                    if(isset($meta['language']) && !is_array($meta['language'])){
+                        $meta['language'] = [$meta['language']];
+                    }
+
                     if(isset($meta['language']) && is_array($meta['language'])){
-                        $meta['language'] = $meta['language'][0];
+                        foreach($meta['language'] as $language){
+                            if(isset($language) && !array_key_exists($language, $summaryData["language"])) {
+                                $summaryData["language"][$language] = 0;
+                            }
+                            if(isset($language)){
+                                $summaryData["language"][$language]++;
+                            }
+                        }
                     }
 
 
-
-                        if(isset($meta['language']) && !array_key_exists($meta['language'], $summaryData["language"])) {
-                            $summaryData["language"][$meta['language']] = 0;
-                        }
-                        if(isset($meta['language'])){
-                            $summaryData["language"][$meta['language']]++;
-                        }
                         $summaryData["totalBooks"]++;
                     if($this->option('summaryOnly') == "true"){
                         continue;
@@ -122,47 +126,35 @@ class ImportFromLocalDirectory extends Command
                     $titleMetaType = MetaType::where("type", "=", "title")->first()->id ?? 0;
                     $languageMetaType = MetaType::where("type", "=", "language")->first()->id ?? 0;
 
-                    if(!empty($this->option('language')) && array_key_exists("language", $meta) && !in_array(strtolower($meta['language']), explode(",", $this->option('language')))){
-                        //Skip this book
+                    $languageFound = false;
+                    if(isset($meta['language'])) {
+                        foreach ($meta['language'] as $language) {
+                            if(!empty($this->option('language')) && array_key_exists("language", $meta) && in_array(strtolower($language), explode(",", $this->option('language')))){
+                                //Skip this book
+                                $languageFound = true;
+                            }
+                        }
+                    }
+
+                    if($languageFound === false){
                         continue;
                     }
+                    unset($languageFound);
+
                     $creatorBooks = MetaValue::where("metadata_type", "=", $creatorMetaType)->where("value", "=", $meta['creator'])->get("file_id");
                     $titleBooks = MetaValue::where("metadata_type", "=", $titleMetaType)->where("value", "=", $meta['title'])->whereIn("file_id", $creatorBooks)->get("file_id");
                     $titleBooksExists = MetaValue::where("metadata_type", "=", $titleMetaType)->where("value", "=", $meta['title'])->whereIn("file_id", $creatorBooks)->exists();
-                    if(isset($meta['language'])){
-                        $languageBooksExists = MetaValue::where("metadata_type", "=", $languageMetaType)->where("value", "=", $meta['language'])->whereIn("file_id", $titleBooks)->exists();
-                    }
 
-                    if(empty($this->option('language'))) {
+                    if($titleBooksExists) {
 
-                        if($titleBooksExists) {
+                        $this->info("File already exists: " . $file->getRealPath());
 
-                            $this->info("File already exists: " . $file->getRealPath());
+                        if ($removeDuplicates) {
+                            $this->info("Removing duplicate file: " . $file->getRealPath());
+                            File::delete($file->getRealPath());
 
-                            if ($removeDuplicates) {
-                                $this->info("Removing duplicate file: " . $file->getRealPath());
-                                File::delete($file->getRealPath());
-
-                            }
-                            continue;
                         }
-
-                    }
-
-                    if(!empty($this->option('language')) && isset($meta['language'])) {
-
-                        if($languageBooksExists) {
-
-                            $this->info("File already exists: " . $file->getRealPath());
-
-                            if ($removeDuplicates) {
-                                $this->info("Removing duplicate file: " . $file->getRealPath());
-                                File::delete($file->getRealPath());
-
-                            }
-                            continue;
-                        }
-
+                        continue;
                     }
 
                     $addFile = new AddFileClass();

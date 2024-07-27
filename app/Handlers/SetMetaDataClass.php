@@ -132,14 +132,24 @@ class SetMetaDataClass
                 "type" => $key
             ]);
             if(is_array($value)) {
-                $value = $value[0];
-            }
-            $value = MetaValue::firstOrCreate([
+                foreach($value as $v){
+                    MetaValue::firstOrCreate([
 
-                "value" => substr(iconv("UTF-8", "ASCII//TRANSLIT",$value), 0, 500),
-                "file_id" => $file->id,
-                "metadata_type" => $type->id
-            ]);
+                        "value" => substr(iconv("UTF-8", "ASCII//TRANSLIT",$v), 0, 500),
+                        "file_id" => $file->id,
+                        "metadata_type" => $type->id
+                    ]);
+                }
+
+            }else{
+                MetaValue::firstOrCreate([
+
+                    "value" => substr(iconv("UTF-8", "ASCII//TRANSLIT",$value), 0, 500),
+                    "file_id" => $file->id,
+                    "metadata_type" => $type->id
+                ]);
+            }
+
 
         }
 
