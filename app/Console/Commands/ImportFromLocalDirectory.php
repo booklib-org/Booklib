@@ -83,6 +83,9 @@ class ImportFromLocalDirectory extends Command
                     $meta = json_decode(file_get_contents($file->getRealPath() . ".bmf"), true);
                 }
 
+                if(!is_array($meta)){
+                    continue;
+                }
                 if(!array_key_exists("creator", $meta) AND array_key_exists("MetadataCreator", $meta)){
                     $meta['creator'] = $meta['MetadataCreator'];
                 }
@@ -95,9 +98,7 @@ class ImportFromLocalDirectory extends Command
                     $meta['language'] = [$meta['MetadataLanguage']];
                 }
 
-                if(!is_array($meta)){
-                    continue;
-                }
+
 
                 //Check if it has a "creator" key
                 if(array_key_exists("creator", $meta) && array_key_exists("title", $meta)) {
