@@ -83,6 +83,17 @@ class ImportFromLocalDirectory extends Command
                     $meta = json_decode(file_get_contents($file->getRealPath() . ".bmf"), true);
                 }
 
+                if(!array_key_exists("creator", $meta) AND array_key_exists("MetadataCreator", $meta)){
+                    $meta['creator'] = $meta['MetadataCreator'];
+                }
+
+                if(!array_key_exists("title", $meta) AND array_key_exists("MetadataTitle", $meta)){
+                    $meta['title'] = $meta['MetadataTitle'];
+                }
+
+                if(!array_key_exists("language", $meta) AND array_key_exists("MetadataLanguage", $meta)){
+                    $meta['language'] = [$meta['MetadataLanguage']];
+                }
 
                 if(!is_array($meta)){
                     continue;
