@@ -50,6 +50,8 @@ class RemoveFromLocalImporDirectory extends Command
         echo "Found " . $finder->count() . " files in the /import directory\n";
         echo "Starting import process\n";
 
+        $removeLanguage = explode(",", $this->option('language'));
+
         foreach ($finder as $file) {
             $metadata = new SetMetaDataClass();
 
@@ -62,7 +64,12 @@ class RemoveFromLocalImporDirectory extends Command
 
             if(str_ends_with($file->getRealPath(), ".epub")) {
 
-                $meta = $metadata->getEpubFileMetaData($file->getRealPath());
+                if(!file_exists($file->getRealPath() . ".bmf")){
+                    $meta = $metadata->getEpubFileMetaData($file->getRealPath());
+                    file_put_contents($file->getRealPath() . ".bmf", json_encode($meta));
+                }else{
+                    $meta = json_decode(file_get_contents($file->getRealPath() . ".bmf"), true);
+                }
                 if(!is_array($meta)){
                     continue;
                 }
@@ -84,7 +91,7 @@ class RemoveFromLocalImporDirectory extends Command
                         continue;
                     }
 
-                    if(!empty($this->option('language')) && strtolower($this->option('language')) == strtolower($meta['language'])){
+                    if(!empty($this->option('language')) && in_array(strtolower($meta['language']),$removeLanguage)){
                         File::delete($file->getRealPath());
                         echo "Removed file.\n";
                     }
