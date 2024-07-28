@@ -98,7 +98,21 @@ class ImportFromLocalDirectory extends Command
                     $meta['language'] = [$meta['MetadataLanguage']];
                 }
 
+                if(!array_key_exists("creator", $meta) AND array_key_exists("Creator", $meta)){
+                    $meta['creator'] = $meta['Creator'];
+                }
 
+                if(!array_key_exists("title", $meta) AND array_key_exists("Title", $meta)){
+                    $meta['title'] = $meta['Title'];
+                }
+
+                if(!array_key_exists("language", $meta) AND array_key_exists("Language", $meta)){
+                    $meta['language'] = [$meta['Language']];
+                }
+
+                if(!array_key_exists("creator", $meta) AND array_key_exists("Author", $meta)){
+                    $meta['creator'] = $meta['Author'];
+                }
 
                 //Check if it has a "creator" key
                 if(array_key_exists("creator", $meta) && array_key_exists("title", $meta)) {
