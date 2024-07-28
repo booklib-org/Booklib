@@ -86,32 +86,20 @@ class ImportFromLocalDirectory extends Command
                 if(!is_array($meta)){
                     continue;
                 }
-                if(!array_key_exists("creator", $meta) AND array_key_exists("MetadataCreator", $meta)){
-                    $meta['creator'] = $meta['MetadataCreator'];
+                if(!array_key_exists("creator", $meta) AND array_key_exists("metadatacreator", $meta)){
+                    $meta['creator'] = $meta['metadatacreator'];
                 }
 
-                if(!array_key_exists("title", $meta) AND array_key_exists("MetadataTitle", $meta)){
-                    $meta['title'] = $meta['MetadataTitle'];
+                if(!array_key_exists("title", $meta) AND array_key_exists("metadatatitle", $meta)){
+                    $meta['title'] = $meta['metadatatitle'];
                 }
 
-                if(!array_key_exists("language", $meta) AND array_key_exists("MetadataLanguage", $meta)){
-                    $meta['language'] = [$meta['MetadataLanguage']];
+                if(!array_key_exists("language", $meta) AND array_key_exists("metadatalanguage", $meta)){
+                    $meta['language'] = [$meta['metadatalanguage']];
                 }
 
-                if(!array_key_exists("creator", $meta) AND array_key_exists("Creator", $meta)){
-                    $meta['creator'] = $meta['Creator'];
-                }
-
-                if(!array_key_exists("title", $meta) AND array_key_exists("Title", $meta)){
-                    $meta['title'] = $meta['Title'];
-                }
-
-                if(!array_key_exists("language", $meta) AND array_key_exists("Language", $meta)){
-                    $meta['language'] = [$meta['Language']];
-                }
-
-                if(!array_key_exists("creator", $meta) AND array_key_exists("Author", $meta)){
-                    $meta['creator'] = $meta['Author'];
+                if(!array_key_exists("creator", $meta) AND array_key_exists("author", $meta)){
+                    $meta['creator'] = $meta['author'];
                 }
 
                 //Check if it has a "creator" key

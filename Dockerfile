@@ -39,7 +39,7 @@ RUN apt-get -qq update \
     cron \
     jq \
     git \
-    calibre \
+    vim \
     pdftk \
     make \
     libzip-dev \
