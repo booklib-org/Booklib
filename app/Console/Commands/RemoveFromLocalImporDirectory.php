@@ -56,11 +56,7 @@ class RemoveFromLocalImporDirectory extends Command
             $metadata = new SetMetaDataClass();
 
             echo "Processing file: " . $file->getRealPath() . "\n";
-            $meta = $metadata->getEpubFileMetaData($file->getRealPath());
 
-            if(!is_array($meta)){
-                continue;
-            }
 
             if(str_ends_with($file->getRealPath(), ".epub")) {
 
