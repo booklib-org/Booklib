@@ -150,7 +150,7 @@ class ImportFromLocalDirectory extends Command
                         }
                     }
 
-                    if($languageFound === false){
+                    if(!empty($this->option('language')) && $languageFound === false){
                         continue;
                     }
                     unset($languageFound);
