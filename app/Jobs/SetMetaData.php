@@ -58,6 +58,8 @@ class SetMetaData implements ShouldQueue
 
         }
 
+
+
         unlink("/tmp/SetMetaData.lock");
 
 
