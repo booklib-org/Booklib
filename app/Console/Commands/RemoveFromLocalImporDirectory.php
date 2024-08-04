@@ -48,7 +48,7 @@ class RemoveFromLocalImporDirectory extends Command
             ->name('/\.mobi$/i');
 
         echo "Found " . $finder->count() . " files in the /import directory\n";
-        echo "Starting import process\n";
+        echo "Starting removal process\n";
 
         $removeLanguage = explode(",", $this->option('language'));
 
@@ -105,8 +105,34 @@ class RemoveFromLocalImporDirectory extends Command
 
         }
 
+        echo "Getting a complete list of all CBR and CBZ files in the /import directory\n";
 
-            print_r($summaryData);
+        $directory = '/import';
+
+        $finder = new Finder();
+        $finder->files()
+            ->in($directory)
+            ->name('/\.cbr/i')
+            ->name('/\.cbz/i');
+
+        echo "Found " . $finder->count() . " files in the /import directory\n";
+        $summaryData["CBR/CBZ Files Removed"] =0;
+        foreach ($finder as $file) {
+            $summaryData["totalBooks"]++;
+
+            if($this->option('summaryOnly') == "true"){
+                continue;
+            }
+
+            if(File::where('filename', '=', $file->getFilename())->exists() && strlen($file->getFilename()) > 10){
+                echo "File already exists in the database based on name, removing.\n";
+                File::delete($file->getRealPath());
+                $summaryData["CBR/CBZ Files Removed"]++;
+            }
+
+        }
+
+        print_r($summaryData);
 
         return 0;
 

@@ -82,9 +82,13 @@ class CleanupImportDirectory extends Command
             unset($finder2);
         }
 
-        foreach($removeDirectories as $directory){
+        foreach($removeDirectories as $directory) {
             echo "Removing " . $directory . "\n";
-            rmdir($directory);
+            try {
+                rmdir($directory);
+            } catch (\Exception $e) {
+                echo "Could not remove " . $directory . "\n";
+            }
         }
     }
 }
