@@ -26,7 +26,7 @@ class CleanupImportDirectory extends Command
      */
     public function handle()
     {
-        $directory = '/import';
+            $directory = '/import';
 
         $finder = new Finder();
         $finder->files()

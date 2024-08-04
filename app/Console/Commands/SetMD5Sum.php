@@ -32,6 +32,9 @@ class SetMD5Sum extends Command
         echo "Found " . $files->count() . " files with a null md5sum\n";
         $processed = 0;
         foreach($files as $file){
+            if(file_exists($file->directory->directory . "/" . $file->filename) == false){
+                continue;
+            }
             $file->md5sum = md5_file($file->directory->directory . "/" . $file->filename);
             $file->save();
             $processed++;

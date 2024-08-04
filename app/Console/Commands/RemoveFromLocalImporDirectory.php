@@ -124,10 +124,18 @@ class RemoveFromLocalImporDirectory extends Command
                 continue;
             }
 
-            if(File::where('filename', '=', $file->getFilename())->exists() && strlen($file->getFilename()) > 10){
-                echo "File already exists in the database based on name, removing.\n";
-                File::delete($file->getRealPath());
-                $summaryData["CBR/CBZ Files Removed"]++;
+            if(File::where('filename', '=', $file->getFilename())->exists()){
+
+                $md5sum = md5_file($file->getRealPath());
+                foreach(File::where('filename', '=', $file->getFilename())->get() as $dbFile){
+                    if($dbFile->md5sum == $md5sum){
+                        echo "File already exists in the database based on and hash, removing.\n";
+                        unlink($file->getRealPath());
+                        $summaryData["CBR/CBZ Files Removed"]++;
+                    }
+                }
+
+
             }
 
         }
