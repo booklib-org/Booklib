@@ -124,10 +124,10 @@ class RemoveFromLocalImporDirectory extends Command
                 continue;
             }
 
-            if(File::where('filename', '=', $file->getFilename())->exists()){
+            if(\App\Models\File::where('filename', '=', $file->getFilename())->exists()){
 
                 $md5sum = md5_file($file->getRealPath());
-                foreach(File::where('filename', '=', $file->getFilename())->get() as $dbFile){
+                foreach(\App\Models\File::where('filename', '=', $file->getFilename())->get() as $dbFile){
                     if($dbFile->md5sum == $md5sum){
                         echo "File already exists in the database based on and hash, removing.\n";
                         unlink($file->getRealPath());
