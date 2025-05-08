@@ -1,4 +1,4 @@
-FROM php:8.3-fpm
+FROM php:8.4-fpm
 LABEL Maintainer="Martijn Katerbarg <https://github.com/booklib-org/booklib>"
 LABEL Description="Full Stack Container with Booklib, Nginx, PHP8.3 on Alpine 3.19 - Needs MySQL or PostgreSQL to function, please read README."
 VOLUME [ "/storage", "/library" ]
